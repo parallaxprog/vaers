@@ -1,0 +1,4 @@
+VAERS data analysis using publically available data at http://vaers.hhs.gov/data.html
+
+Database: MySQL.
+Database components: Direct Access components from MicroOLAP.com
