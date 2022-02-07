@@ -1,4 +1,11 @@
 VAERS data analysis using publically available data at http://vaers.hhs.gov/data.html
 
+To use:
+1) Download and install MySQL community database server from https://mysql.com
+2) Create db schema called "vaers", with user "vaersuser" having pw="vaers909" (or compile source with your own login credentials)
+3) Download VAERS data files from https://vaers.hhs.gov/data.html, unzip locally.
+4) Start the VAERS Analyzer, go to the Setup tab, connect to DB, create tables
+5) Go to Extraction tab and load these files into the DB
+
 
 
