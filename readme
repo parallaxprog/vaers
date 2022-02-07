@@ -7,5 +7,6 @@ To use:
 4) Start the VAERS Analyzer, go to the Setup tab, connect to DB, create tables
 5) Go to Extraction tab and load these files into the DB
 
+Created with Embarcadero Delphi 10.3, using MicroOLAP 3.3.1 direct access DB components.
 
 
