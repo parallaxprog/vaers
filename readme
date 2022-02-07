@@ -1,3 +1,5 @@
+VAERS = Vaccine Adverse Events Reporting System, a database of adverse events run by HHS.gov - U.S. Department of Health & Human Services.
+
 VAERS data analysis using publically available data at https://vaers.hhs.gov/data.html
 
 To use:
