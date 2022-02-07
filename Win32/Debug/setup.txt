@@ -1,0 +1,4 @@
+Path=D:\vaers data backup\AllVAERSDataCSVS
+User=vaersuser
+Pass=vaers909
+Port=3306
