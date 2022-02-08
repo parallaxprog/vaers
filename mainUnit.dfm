@@ -1,7 +1,7 @@
 object mainForm: TmainForm
   Left = 0
   Top = 0
-  Caption = 'Vaccine Adverse Events Reporting System (VAERS) Data Analysis'
+  Caption = 'Vaccine Adverse Events Reporting System (VAERS) Data Analyzer'
   ClientHeight = 655
   ClientWidth = 1340
   Color = clBtnFace
