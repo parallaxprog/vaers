@@ -27,7 +27,9 @@ For 2022, data updated 28/1, the Wonder query reports a total of 291 death event
 But when extracting the 2022VAERSData.csv file, updated 28/1/2022, the extraction count shows 726 death events.
 The Analyzer death count is thus about 150% higher than the CDC Wonder query reports.
 
-I have just added the ability to generate a visual inspection file when extracting data, so it is easy to confirm the existence of the true number of death events.
+I have just added the ability to generate a visual inspection file when extracting data, so it is easy to confirm the existence of the true number of death events. 
+A textfile is generated with original data truncated or expanded making all rows horizonally aligned, for easy visual confirmation by pattern recognition.
+
 Double-checking this way, it is easily confirmed that the VAERS data file for january 2022, updated 28/1, indeed contains 726 death events.
 Further analysis tells us that 702 of these are related to vax_type='COVID19', i.e. about 97%.
 
