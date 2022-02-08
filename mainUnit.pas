@@ -232,6 +232,7 @@ type
     edC19Inj: TEdit;
     Label28: TLabel;
     lotDQuery: TMySQLDirectQuery;
+    cbInspection: TCheckBox;
     procedure btnDataClick(Sender: TObject);
     procedure btnSymptomsClick(Sender: TObject);
     procedure btnVaxClick(Sender: TObject);
@@ -429,6 +430,7 @@ begin
     end;
     close;
 
+    if FBatch  then
     FYear:=strToInt(copy(FSQLList[i], pos('year=',FSQLList[i])+5, 4));
 
     if FBatch and (SumTypeCount=1) then
@@ -479,7 +481,7 @@ begin
     if length(FResult)>0 then
     begin
       edResult.Text:=FResult;
-      meQueryLog.Lines.Insert(0, 'Query: "'+ReplaceCRLF(FSQL)+'" - result: '+FResult);
+      meQueryLog.Lines.Insert(0, 'Query: "'+ReplaceCRLF(FSQLList[FLCount])+'" - result: '+FResult);
     end;
   end;
   true: with mainForm do
@@ -572,7 +574,7 @@ begin
       begin
         Add('SELECT count(*)');
         Add('FROM '+ tableName);
-        Add('WHERE died=''Y''');
+        Add('WHERE died=1');
         if cbAgeBelow.Checked then
           Add('AND age_yrs<'+getAge);
       end;
@@ -585,11 +587,11 @@ begin
           true: begin
             Add('FROM vaers.'+ tableName + ' d, vaers.'+vaxTableName+' v, vaers.'+sympTableName+' s');
             Add('WHERE d.vaers_id=v.vaers_id AND d.vaers_id=s.vaers_id');
-            Add('AND v.vax_type=''COVID19'' AND d.died=''Y''');
+            Add('AND v.vax_type=''COVID19'' AND d.died=1');
           end;
           false: begin
             Add('FROM vaers.'+ tableName + ' d, vaers.'+vaxTableName+' v');
-            Add('WHERE d.vaers_id=v.vaers_id AND v.vax_type=''COVID19'' AND d.died=''Y''');
+            Add('WHERE d.vaers_id=v.vaers_id AND v.vax_type=''COVID19'' AND d.died=1');
           end;
         end;
         if cbAgeBelow.Checked then
@@ -651,15 +653,17 @@ end;
 
 procedure TmainForm.btnQueryClick(Sender: TObject);
 var tableName, resField:string;
+
 begin
   if length(meQuery.Lines.Text)=0 then exit;
-  
+
   lblAction.Caption:='Running query...';
 
   if pos('count(*)', meQuery.Lines.Text)<>0 then
   begin
     pbQuery.position:=0;
     queryTimer.Enabled:=true;
+    meQuery.Lines.Text:=stringReplace(meQuery.Lines.Text, #13+#10,' ',[rfReplaceAll]);
     QueryThread:=TQueryThread.Create(true, meQuery.Lines.Text, false, cData);
     QueryThread.Resume;
     Exit;
@@ -1918,7 +1922,7 @@ begin
     application.ProcessMessages;
     if stopEx then exit;
   end;
-  meLog.Lines[0]:=timeToStr(now)+' - Counting lines: '+inttostr(i-1)+', preparing to extract data...';
+  meLog.Lines[0]:=timeToStr(now)+' - Counting lines: '+inttostr(i-1)+', starting data extraction...';
   reset(f);
   result:=i;
 end;
@@ -2348,13 +2352,17 @@ begin
 end;
 
 procedure TmainForm.ExtractData(tableName:string;year:integer);
-var fn:string;
+var fn, fnd:string;
    s:string;
-   i, endID, lineNo:integer;
+   i, endID, lineNo, deaths:integer;
    sTime:TDateTime;
    IORes:integer;
+   f2:textfile;
+   doSave:boolean;
 
 procedure saveData(s:string);
+var startS, line:string;
+    died:boolean;
 
 function getField(maxD:integer;numField:boolean):string;
 var p:integer;
@@ -2365,10 +2373,12 @@ begin
   end;
   if copy(s,1,1)='"' then
   begin
+    //starting quote
     s:=copy(s, 2, length(s));
     p:=pos('",',s);
     if (p<>0) then
     begin
+      //ending quote, but not last field
       result:=copy(s, 1, p-1);
       result:=stringReplace(result,'''','',[rfReplaceAll]);
       result:=stringReplace(result,'"','',[rfReplaceAll]);
@@ -2378,6 +2388,7 @@ begin
       exit;
     end else if (pos('"',s)=length(s))  then
     begin
+      //ending quote for last field, allergies
       result:=copy(s, 1, length(s));
       result:=stringReplace(result,'''','',[rfReplaceAll]);
       result:=stringReplace(result,'"','',[rfReplaceAll]);
@@ -2399,6 +2410,60 @@ begin
   end;
 end;
 
+function getFieldS(maxD:integer;numField:boolean):string;
+var p, len, i:integer;
+begin
+  case numField of
+    true: result:='NULL';
+    false: result:='';
+  end;
+  if copy(s,1,1)='"' then
+  begin
+    //starting quote
+    s:=copy(s, 2, length(s));
+    p:=pos('",',s);
+    if (p<>0) then
+    begin
+      //ending quote, but not last field
+      result:=copy(s, 1, p-1);
+      result:=stringReplace(result,'''','',[rfReplaceAll]);
+      result:=stringReplace(result,'"','',[rfReplaceAll]);
+      result:=strip(stringReplace(result,'""','',[rfReplaceAll]));
+      result:=copy(result,1,maxD);
+      len:=length(result);
+      if (length(result)<MaxD) then for i:=succ(len) to maxD do result:=result+' ';
+      s:=copy(s, p+2, length(s));
+      exit;
+    end else if (pos('"',s)=length(s))  then
+    begin
+      //ending quote for last field, allergies
+      result:=copy(s, 1, length(s));
+      result:=stringReplace(result,'''','',[rfReplaceAll]);
+      result:=stringReplace(result,'"','',[rfReplaceAll]);
+      result:=strip(stringReplace(result,'""','',[rfReplaceAll]));
+      result:=copy(result,1,maxD);
+      len:=length(result);
+      if (length(result)<MaxD) then for i:=succ(len) to maxD do result:=result+' ';
+      exit;
+    end;
+  end;
+
+  p:=pos(',',s);
+  if p<>0 then
+  begin
+    result:=copy(s, 1, p-1);
+    result:=strip(stringReplace(result,'''','',[rfReplaceAll]));
+    result:=copy(result,1,maxD);
+    if numField then
+      if length(result)=0 then result:='-';
+    s:=copy(s, p+1, length(s));
+    //if (length(result)<>MaxD) and (maxD=4) then Log('res');
+  end;
+
+  len:=length(result);
+    if (length(result)<MaxD) then for i:=succ(len) to maxD do result:=result+' ';
+end;
+
 function convDate(s:string):string;
 begin
   if length(s)=10 then
@@ -2414,9 +2479,26 @@ begin
   if sameText(s, 'N') then result:='0';
 end;
 
+function convBoolS(s:string):string;
+begin
+  result:='-';
+  s:=trim(s);
+  if sameText(s, 'Y') then result:=s;
+  if sameText(s, 'N') then result:='-';
+end;
+
+function cBoolV(s:string;var died:boolean):string;
+begin
+  result:='----';
+  died:=sameText(s, 'Y');
+  if died then result:='DIED';
+end;
+
 begin
   s:=stringReplace(s,'""','',[rfReplaceAll]);
+  startS:=s;
 
+  if doSave then
   with MySQLBatch do
   begin
     sql.Text:=sql.Text+'insert into '+tableName+' values('+
@@ -2457,10 +2539,70 @@ begin
     convBool(getField(1, true))+',"'+    //ER_ED_VISIT
     getField(3000, false)+'");';         //ALLERGIES
   end;
+
+  s:=startS;
+  line:=getField(15, true)+','+           //VAERS_ID
+    inttostr(Year)+','+                   //YEAR
+    convDate(getField(10, true))+',"'+    //RECVDATE
+    getFieldS(2, false)+'",'+             //STATE
+    getFieldS(2, false)+','+              //AGE_YRS
+    getFieldS(2, false)+','+              //CAGE_YR
+    getFieldS(1, true)+',"'+              //CAGE_MO
+    getFieldS(1, false)+'",'+             //SEX
+    getFieldS(0, false)+',"'+             //RPT_DATE
+    getFieldS(150, false)+'",'+           //SYMPTOM_TEXT
+    cBoolV(getField(4, true), died)+','+  //DIED
+    getFieldS(10, true)+','+              //DATEDIED
+    convBoolS(getField(1, true))+','+     //L_THREAT
+    convBoolS(getField(1, true))+','+     //ER_VISIT
+    convBoolS(getField(1, true))+','+     //HOSPITAL
+    convBoolS(getField(1, true))+','+     //HOSPDAYS
+    convBoolS(getField(1, true))+','+     //X_STAY
+    convBoolS(getField(1, true))+','+     //DISABLE
+    convBoolS(getField(1, true))+','+     //RECOVD
+    getFieldS(10, true)+','+              //VAX_DATE
+    getFieldS(10, true)+','+              //ONSET_DATE
+    getFieldS(4, true)+',"'+              //NUMDAYS
+    getFieldS(10, false)+'","'+           //LAB_DATA
+    getFieldS(3, false)+'","'+            //V_ADMINBY
+    getFieldS(3, false)+'","'+            //V_FUNDBY
+    getFieldS(10, false)+'","'+           //OTHER_MEDS
+    getFieldS(10, false)+'","'+           //CUR_ILL
+    getFieldS(10, false)+'","'+           //HISTORY
+    getFieldS(10, false)+'","'+           //PRIOR_VAX
+    getFieldS(1, false)+'","'+            //SPLTTYPE
+    getField(1, false)+'",'+              //FORM_VERS
+    getFieldS(10, true)+','+              //TODAYS_DATE
+    convBoolS(getField(1, true))+','+     //BIRTH_DEFECT
+    convBoolS(getField(1, true))+','+     //OFC_VISIT
+    convBoolS(getField(1, true))+',"'+    //ER_ED_VISIT
+    getFieldS(10, false)+'");';           //ALLERGIES
+
+  if died then
+  begin
+    writeln(f2, line);
+    inc(deaths);
+  end;
 end;
 
 begin
+  doSave:=not cbInspection.Checked;
+  case (year=0) of
+    true: begin
+      fnd:='VAERS Patientdata - non-domestic deaths.txt';
+      fn:='NonDomesticVAERSDATA.csv';
+    end;
+    false: begin
+      fnd:='VAERS Patientdata - US deaths for year '+inttostr(year)+'.txt';
+      fn:=inttostr(Year)+'VAERSDATA.csv';
+    end;
+  end;
+
+  assignFile(f2, fnd);
+  rewrite(f2);
+
   lineNo:=0;
+  deaths:=0;
   if not cbDelete.Checked then
   begin
     Log('Patientdata extraction, year: '+inttostr(Year)+', checking database...');
@@ -2468,9 +2610,6 @@ begin
     endID:=YearExist(tableName, Year);
   end else endID:=0;
 
-  if year=0 then
-  fn:='NonDomesticVAERSDATA.csv' else
-  fn:=inttostr(Year)+'VAERSDATA.csv';
 
   fn:=edPath.Text+'\'+fn;
   if not fileExists(fn) then
@@ -2479,7 +2618,7 @@ begin
     Exit;
   end;
 
-  if cbDelete.Checked then
+  if cbDelete.Checked and doSave then
   with delQuery do
   begin
     Log('Patientdata extraction, year: '+inttostr(Year)+', deleting database...');
@@ -2505,7 +2644,8 @@ begin
 
   //read out first line with field descriptions
   readln(f, s);
-  if endID<>0 then
+
+  if (endID<>0) and doSave then
   if not skipToID(endID, lineNo) then
   begin
     showMessage('Did not find starting point in file, extraction aborted!');
@@ -2526,19 +2666,22 @@ begin
     if i mod 100 = 0 then
     begin
       if secondsBetween(now, sTime)>0 then
-      edNum.text:=inttostr(i)+' '+inttostr(round(i/secondsBetween(now, sTime)))+' num/sec.';
+      edNum.text:=inttostr(i)+' '+inttostr(round(i/secondsBetween(now, sTime)))+'/sec.';
       edNum.Refresh;
 
-      MySQLBatch.SQL.Text:=copy(MySQLBatch.SQL.Text, 1, length(MySQLBatch.SQL.Text)-1);
-      MySQLBatch.ExecSQL;
-      MySQLBatch.SQL.Clear;
-
+      if doSave then
+      begin
+        MySQLBatch.SQL.Text:=copy(MySQLBatch.SQL.Text, 1, length(MySQLBatch.SQL.Text)-1);
+        MySQLBatch.ExecSQL;
+        MySQLBatch.SQL.Clear;
+      end;
     end;
     application.ProcessMessages;
     saveData(s);
   end;
 
   //run last batch
+  if doSave and (not stopEx) then
   if length(MySQLBatch.SQL.Text)>0 then
   begin
     MySQLBatch.SQL.Text:=copy(MySQLBatch.SQL.Text, 1, length(MySQLBatch.SQL.Text)-1);
@@ -2547,14 +2690,26 @@ begin
   end;
 
   closefile(f);
+  closefile(f2);
   edNum.text:=inttostr(i);
   edNum.Refresh;
-  case stopEx of
-    true: log('Patientdata extraction stopped, time: '+TimeToStr(now-sTime)+', lines processed: '+inttostr(i));
-    false: log('Finished patientdata extraction, time: '+TimeToStr(now-sTime)+', lines processed: '+inttostr(i));
+
+  if stopEx then
+  begin
+    log('Patientdata extraction stopped, time: '+TimeToStr(now-sTime)+', lines processed: '+inttostr(i));
+    exit;
   end;
 
-  checkNumRecords(tableName, year, i);
+  if doSave then
+  begin
+    log('Finished patientdata extraction, time: '+TimeToStr(now-sTime)+', lines processed: '+inttostr(i));
+    checkNumRecords(tableName, year, i);
+  end;
+
+  case (year=0) of
+    true: log('Patientdata visual inspection file for US, year '+inttostr(year)+', counting '+inttostr(deaths)+' death events, saved as: "'+fnd+'"');
+    false: log('Patientdata visual inspection file, non-domestic, counting '+inttostr(deaths)+' death events, saved as: "'+fnd+'"');
+  end;
 end;
 
 procedure TmainForm.btnPathClick(Sender: TObject);
@@ -2571,5 +2726,4 @@ begin
 end;
 
 end.
-
 
