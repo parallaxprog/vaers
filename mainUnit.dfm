@@ -3,7 +3,7 @@ object mainForm: TmainForm
   Top = 0
   Caption = 'Vaccine Adverse Events Reporting System (VAERS) Data Analyzer'
   ClientHeight = 655
-  ClientWidth = 1340
+  ClientWidth = 1370
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,9 +21,9 @@ object mainForm: TmainForm
   object pcMain: TPageControl
     Left = 0
     Top = 0
-    Width = 1340
+    Width = 1370
     Height = 636
-    ActivePage = TabSheet3
+    ActivePage = tsQuery
     Align = alClient
     TabOrder = 0
     ExplicitWidth = 1434
@@ -35,16 +35,16 @@ object mainForm: TmainForm
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 73
         Align = alTop
         TabOrder = 0
         ExplicitWidth = 1069
         DesignSize = (
-          1332
+          1362
           73)
         object SpeedButton1: TSpeedButton
-          Left = 599
+          Left = 583
           Top = 8
           Width = 154
           Height = 49
@@ -126,7 +126,7 @@ object mainForm: TmainForm
           OnClick = btnStopClick
         end
         object lblCount: TLabel
-          Left = 1093
+          Left = 1123
           Top = 11
           Width = 38
           Height = 16
@@ -141,7 +141,7 @@ object mainForm: TmainForm
           ExplicitLeft = 1155
         end
         object Label1: TLabel
-          Left = 781
+          Left = 757
           Top = 11
           Width = 59
           Height = 16
@@ -154,7 +154,7 @@ object mainForm: TmainForm
           ParentFont = False
         end
         object btnSymptoms: TButton
-          Left = 159
+          Left = 145
           Top = 8
           Width = 162
           Height = 49
@@ -169,9 +169,9 @@ object mainForm: TmainForm
           OnClick = btnSymptomsClick
         end
         object btnVax: TButton
-          Left = 327
+          Left = 308
           Top = 8
-          Width = 114
+          Width = 143
           Height = 49
           Caption = 'Read Vax file'
           Font.Charset = DEFAULT_CHARSET
@@ -184,9 +184,9 @@ object mainForm: TmainForm
           OnClick = btnVaxClick
         end
         object btnReadAll: TButton
-          Left = 447
+          Left = 451
           Top = 8
-          Width = 146
+          Width = 132
           Height = 49
           Caption = 'Read All Files'
           Font.Charset = DEFAULT_CHARSET
@@ -199,7 +199,7 @@ object mainForm: TmainForm
           OnClick = btnReadAllClick
         end
         object btnData: TButton
-          Left = 16
+          Left = 7
           Top = 8
           Width = 137
           Height = 49
@@ -214,9 +214,9 @@ object mainForm: TmainForm
           OnClick = btnDataClick
         end
         object edNum: TEdit
-          Left = 1093
+          Left = 1104
           Top = 33
-          Width = 74
+          Width = 93
           Height = 24
           Alignment = taRightJustify
           Anchors = [akTop, akRight]
@@ -227,10 +227,9 @@ object mainForm: TmainForm
           Font.Style = []
           ParentFont = False
           TabOrder = 4
-          ExplicitLeft = 1155
         end
         object Button3: TButton
-          Left = 1185
+          Left = 1215
           Top = 7
           Width = 137
           Height = 50
@@ -247,9 +246,9 @@ object mainForm: TmainForm
           ExplicitLeft = 1247
         end
         object cbDelete: TCheckBox
-          Left = 943
-          Top = 37
-          Width = 208
+          Left = 919
+          Top = 40
+          Width = 194
           Height = 17
           Caption = 'Delete table data before insert'
           Font.Charset = DEFAULT_CHARSET
@@ -261,7 +260,7 @@ object mainForm: TmainForm
           TabOrder = 6
         end
         object cbDatatype: TComboBox
-          Left = 781
+          Left = 754
           Top = 33
           Width = 143
           Height = 24
@@ -279,11 +278,25 @@ object mainForm: TmainForm
             'Domestic data'
             'Non-domestic data')
         end
+        object cbInspection: TCheckBox
+          Left = 919
+          Top = 14
+          Width = 208
+          Height = 17
+          Caption = 'Only generate inspection files'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 8
+        end
       end
       object Panel2: TPanel
         Left = 0
         Top = 73
-        Width = 1332
+        Width = 1362
         Height = 535
         Align = alClient
         TabOrder = 1
@@ -356,7 +369,7 @@ object mainForm: TmainForm
         object Panel12: TPanel
           Left = 159
           Top = 10
-          Width = 1172
+          Width = 1202
           Height = 524
           Align = alClient
           BevelOuter = bvNone
@@ -368,7 +381,7 @@ object mainForm: TmainForm
           object meLog: TMemo
             Left = 0
             Top = 0
-            Width = 1172
+            Width = 1202
             Height = 524
             Align = alClient
             ReadOnly = True
@@ -382,7 +395,7 @@ object mainForm: TmainForm
         object pgBar: TProgressBar
           Left = 1
           Top = 1
-          Width = 1330
+          Width = 1360
           Height = 9
           Align = alTop
           TabOrder = 2
@@ -401,7 +414,7 @@ object mainForm: TmainForm
       object vaxChart: TChart
         Left = 0
         Top = 105
-        Width = 1332
+        Width = 1362
         Height = 503
         BackWall.Color = clWhite
         Legend.Inverted = True
@@ -436,7 +449,7 @@ object mainForm: TmainForm
       object Panel5: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 105
         Align = alTop
         TabOrder = 1
@@ -1232,16 +1245,16 @@ object mainForm: TmainForm
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 67
         Align = alTop
         TabOrder = 0
         ExplicitWidth = 1394
         DesignSize = (
-          1332
+          1362
           67)
         object Label3: TLabel
-          Left = 1046
+          Left = 1076
           Top = 42
           Width = 38
           Height = 16
@@ -1329,7 +1342,7 @@ object mainForm: TmainForm
           OnClick = btnStopClick
         end
         object Button11: TButton
-          Left = 1193
+          Left = 1223
           Top = 8
           Width = 137
           Height = 50
@@ -1346,7 +1359,7 @@ object mainForm: TmainForm
           ExplicitLeft = 1255
         end
         object edCheckNum: TEdit
-          Left = 1106
+          Left = 1136
           Top = 34
           Width = 74
           Height = 24
@@ -1378,7 +1391,7 @@ object mainForm: TmainForm
       object meCheckLog: TMemo
         Left = 345
         Top = 67
-        Width = 987
+        Width = 1017
         Height = 541
         Align = alClient
         ReadOnly = True
@@ -1536,7 +1549,7 @@ object mainForm: TmainForm
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 73
         Align = alTop
         TabOrder = 0
@@ -1658,7 +1671,7 @@ object mainForm: TmainForm
       object lotChart: TChart
         Left = 0
         Top = 73
-        Width = 1332
+        Width = 1362
         Height = 535
         BackWall.Color = clWhite
         Legend.Inverted = True
@@ -1681,6 +1694,7 @@ object mainForm: TmainForm
         Align = alClient
         TabOrder = 0
         ExplicitTop = 79
+        ExplicitWidth = 1332
         ExplicitHeight = 527
         DefaultCanvas = 'TGDIPlusCanvas'
         PrintMargins = (
@@ -1693,10 +1707,11 @@ object mainForm: TmainForm
       object Panel17: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 73
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 1332
         object Label10: TLabel
           Left = 456
           Top = 15
@@ -1966,7 +1981,7 @@ object mainForm: TmainForm
       object lvStudies: TListView
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 608
         Align = alClient
         Columns = <
@@ -1999,7 +2014,7 @@ object mainForm: TmainForm
       object Panel6: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 57
         Align = alTop
         TabOrder = 0
@@ -2105,7 +2120,7 @@ object mainForm: TmainForm
       object dbgStudies: TDBGrid
         Left = 0
         Top = 57
-        Width = 1332
+        Width = 1362
         Height = 551
         Align = alClient
         DataSource = dsstudyQuery
@@ -2148,7 +2163,7 @@ object mainForm: TmainForm
       object Panel7: TPanel
         Left = 0
         Top = 73
-        Width = 1332
+        Width = 1362
         Height = 535
         Align = alClient
         TabOrder = 0
@@ -2332,7 +2347,7 @@ object mainForm: TmainForm
       object Panel8: TPanel
         Left = 0
         Top = 0
-        Width = 1332
+        Width = 1362
         Height = 73
         Align = alTop
         TabOrder = 1
@@ -2434,7 +2449,7 @@ object mainForm: TmainForm
   object StatusBar1: TStatusBar
     Left = 0
     Top = 636
-    Width = 1340
+    Width = 1370
     Height = 19
     Panels = <>
     ExplicitLeft = 696
