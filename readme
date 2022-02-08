@@ -14,7 +14,7 @@ To use:
 VAERS data CSV and compressed (ZIP) files are available for download at https://vaers.hhs.gov/data.html. 
 For information about VAERS data, please view the pdfVAERS Data Use Guide at https://vaers.hhs.gov/docs/VAERSDataUseGuide_en_September2021.pdf
 
-Created with Embarcadero Delphi 10.3, using MicroOLAP 3.3.1 direct access DB components.
+Created with Delphi 10.3, using MicroOLAP 3.3.1 direct access DB components.
 
 
 Regarding VAERS data discrepancies
