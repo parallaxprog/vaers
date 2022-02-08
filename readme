@@ -27,7 +27,7 @@ If you compare the results of the Analyzer with queries done at CDC Wonder, you 
 For 2022, data updated 28/1, the Wonder query reports a total of 291 death events when searching for year=2022 and event=Death.
 
 But when extracting the 2022VAERSData.csv file, updated 28/1/2022, the extraction count shows 726 death events.
-The Analyzer death count is thus about 150% higher than the CDC Wonder query reports.
+The Analyzer death count is thus about 2.5 times the CDC Wonder query reports.
 
 I have just added the ability to generate a visual inspection file when extracting data, so it is easy to confirm the existence of the true number of death events. 
 A textfile is generated with original data truncated or expanded making all rows horizonally aligned, for easy visual confirmation by pattern recognition.
