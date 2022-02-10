@@ -35,3 +35,9 @@ A textfile is generated with original data truncated or expanded making all rows
 Double-checking this way, it is easily confirmed that the VAERS data file for january 2022, updated 28/1, indeed contains 726 death events.
 Further analysis tells us that 702 of these are related to vax_type='COVID19', i.e. about 97%.
 
+10.02.2022
+Added MySQL LOAD DATA using LOCAL INFILE, for very fast .csv file loading, around 20 times faster than regular queries.
+But this demands that LOCAL INFILE is true for the server, and it requires SUPER privileges to set this global variable, if not editing the my.ini init file.
+
+To add this to the ini.file, add the line LOCAL_INFILE=1 under the heading [mysqld] and restart the DB server.
+
