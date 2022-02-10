@@ -2809,11 +2809,10 @@ begin
        for i:=yearOf(now) downto 1990 do
        if cbYears.Checked[abs(i-yearOf(now))] then
        begin
-         {case fastLoad of
+         case fastLoad of
            true: loadData(tableName, i);
            false: extractData(tableName, i);
-         end;}
-         extractData(tableName, i);
+         end;
          if stopEx then
          begin
            Log('Data extraction aborted by user!');
