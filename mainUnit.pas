@@ -2405,7 +2405,7 @@ var res:integer;
 begin
   serviceName:='';
   if not fileExists('scList.txt') then
-    res:=ShellExecute(Handle, nil, 'cmd.exe', '/c sc query type=service > scListX.txt', '', SW_HIDE);
+    res:=ShellExecute(Handle, nil, 'cmd.exe', '/c sc query type=service > scList.txt', '', SW_HIDE);
   if fileExists('scList.txt') then
   begin
     assignFile(f, 'scList.txt');
