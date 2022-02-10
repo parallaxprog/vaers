@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS `vaers`.`studies`;
 DROP TABLE IF EXISTS `vaers`.`sums`;
 DROP TABLE IF EXISTS `vaers`.`sumtypes`;
 DROP TABLE IF EXISTS `vaers`.`filedata`;
+DROP TABLE IF EXISTS `vaers`.`vaxdist`;
+DROP TABLE IF EXISTS `vaers`.`vaxlot`;
 
 CREATE TABLE `vaers`.`data` (
   `VAERS_ID` int NOT NULL,
@@ -179,6 +181,26 @@ CREATE TABLE `filedata` (
   `status` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`filedata_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `vaxdist` (
+  `vaxdist_id` int NOT NULL AUTO_INCREMENT,
+  `vax_lot` varchar(100) DEFAULT NULL,
+  `vax_manu` varchar(100) DEFAULT NULL,
+  `injections` int DEFAULT NULL,
+  PRIMARY KEY (`vaxdist_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=102740 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `vaxlot` (
+  `vaxlot_id` int NOT NULL AUTO_INCREMENT,
+  `vax_type` varchar(100) DEFAULT NULL,
+  `vax_manu` varchar(100) DEFAULT NULL,
+  `vax_lot` varchar(100) DEFAULT NULL,
+  `year` int DEFAULT NULL,
+  `injections` int DEFAULT NULL,
+  PRIMARY KEY (`vaxlot_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=547409 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (1,'Deaths');
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (2,'COVID19 vax-associated deaths');
