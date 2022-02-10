@@ -9,7 +9,7 @@ uses
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdBaseComponent,
   IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, Vcl.ComCtrls, Vcl.ExtCtrls,
   Vcl.CheckLst, VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series,
-  VCLTee.TeeProcs, VCLTee.Chart, shellAPI, Vcl.Buttons;
+  VCLTee.TeeProcs, VCLTee.Chart, shellAPI, Vcl.Buttons, WinSVc, Registry;
 
 type
  TConnectData = record
@@ -41,7 +41,7 @@ type
   end;
 
   TmainForm = class(TForm)
-    MySQL: TMySQLDatabase;
+    mysql: TMySQLDatabase;
     dataQuery: TMySQLQuery;
     userSource: TDataSource;
     saveDataQuery: TMySQLQuery;
@@ -81,15 +81,6 @@ type
     cbSymptom: TCheckBox;
     cbSymptoms: TComboBox;
     tsBackup: TTabSheet;
-    btnBackup: TButton;
-    cbBackupTable: TComboBox;
-    Label6: TLabel;
-    Label7: TLabel;
-    edRows: TEdit;
-    Label8: TLabel;
-    cbType: TComboBox;
-    Label9: TLabel;
-    edFile: TEdit;
     OpenDialog: TOpenDialog;
     checkQuery: TMySQLQuery;
     Label12: TLabel;
@@ -148,7 +139,6 @@ type
     studyQuery: TMySQLQuery;
     studyQuerytitle: TWideStringField;
     studyQueryurl: TWideStringField;
-    lvStudies: TListView;
     dbgStudies: TDBGrid;
     dsstudyQuery: TDataSource;
     btnUpdateStudies: TButton;
@@ -161,7 +151,7 @@ type
     tsSetup: TTabSheet;
     Panel7: TPanel;
     Panel8: TPanel;
-    Button7: TButton;
+    btnCreateTables: TButton;
     Label19: TLabel;
     edUser: TEdit;
     edPass: TEdit;
@@ -171,10 +161,10 @@ type
     btnPath: TButton;
     meSetupLog: TMemo;
     btnCheckTextfile: TButton;
-    Button8: TButton;
+    btnConnect: TButton;
     btnLoadFlu: TButton;
-    Button6: TButton;
-    Button9: TButton;
+    btnLoadStudies: TButton;
+    btnDownload: TButton;
     edPort: TEdit;
     Label21: TLabel;
     Label22: TLabel;
@@ -208,7 +198,7 @@ type
     Button5: TButton;
     cbYearsChecked: TCheckListBox;
     Panel16: TPanel;
-    StatusBar1: TStatusBar;
+    sbMain: TStatusBar;
     cbCheck: TCheckBox;
     lotChart: TChart;
     Panel17: TPanel;
@@ -222,7 +212,6 @@ type
     edPercent: TEdit;
     Label24: TLabel;
     edLotPercent: TEdit;
-    Button15: TButton;
     Label25: TLabel;
     edADVReports: TEdit;
     cbLotType: TComboBox;
@@ -233,6 +222,47 @@ type
     Label28: TLabel;
     lotDQuery: TMySQLDirectQuery;
     cbInspection: TCheckBox;
+    Panel18: TPanel;
+    Button14: TButton;
+    edVisCount: TEdit;
+    Label15: TLabel;
+    Label29: TLabel;
+    cbVisDom: TComboBox;
+    Label30: TLabel;
+    cbVisYear: TComboBox;
+    meVisual: TMemo;
+    DBGrid2: TDBGrid;
+    Panel19: TPanel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Button16: TButton;
+    edTableRecs: TEdit;
+    cbTableDatatype: TComboBox;
+    ComboBox2: TComboBox;
+    tableQuery: TMySQLQuery;
+    dstableQuery: TDataSource;
+    Label34: TLabel;
+    cbTableType: TComboBox;
+    Button17: TButton;
+    sqlBatch: TMySQLBatchExecute;
+    Button18: TButton;
+    Label35: TLabel;
+    cleanTimer: TTimer;
+    btnLoadC19LotList: TButton;
+    btnLoadLotList: TButton;
+    Label6: TLabel;
+    edInsCount: TEdit;
+    loadTimer: TTimer;
+    Panel20: TPanel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Button6: TButton;
+    edCleanCount: TEdit;
+    ComboBox1: TComboBox;
+    meClean: TMemo;
+    SpeedButton2: TSpeedButton;
     procedure btnDataClick(Sender: TObject);
     procedure btnSymptomsClick(Sender: TObject);
     procedure btnVaxClick(Sender: TObject);
@@ -241,7 +271,6 @@ type
     procedure btnQueryClick(Sender: TObject);
     procedure btnSelectClick(Sender: TObject);
     procedure QueryTimerTimer(Sender: TObject);
-    procedure btnBackupClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnPathClick(Sender: TObject);
     procedure cbSymptomClick(Sender: TObject);
@@ -282,19 +311,27 @@ type
     procedure cbRecClick(Sender: TObject);
     procedure cbDefClick(Sender: TObject);
     procedure btnOpenLinkClick(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
+    procedure btnLoadStudiesClick(Sender: TObject);
     procedure btnUpdateStudiesClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
-    procedure Button8Click(Sender: TObject);
-    procedure MySQLAfterConnect(Sender: TObject);
-    procedure MySQLAfterDisconnect(Sender: TObject);
-    procedure MySQLConnectionFailure(Connection: TMySQLDatabase; Error: string);
-    procedure Button9Click(Sender: TObject);
-    procedure Button7Click(Sender: TObject);
+    procedure btnConnectClick(Sender: TObject);
+    procedure mysqlAfterConnect(Sender: TObject);
+    procedure mysqlAfterDisconnect(Sender: TObject);
+    procedure mysqlConnectionFailure(Connection: TMySQLDatabase; Error: string);
+    procedure btnDownloadClick(Sender: TObject);
+    procedure btnCreateTablesClick(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure btnLotUpdateClick(Sender: TObject);
-    procedure Button15Click(Sender: TObject);
+    procedure btnLoadC19LotListClick(Sender: TObject);
     procedure tbLimitChange(Sender: TObject);
+    procedure Button14Click(Sender: TObject);
+    procedure Button16Click(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure Button18Click(Sender: TObject);
+    procedure cleanTimerTimer(Sender: TObject);
+    procedure btnLoadLotListClick(Sender: TObject);
+    procedure loadTimerTimer(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
     dthSeries: TFastLineSeries;
@@ -315,23 +352,27 @@ type
     lotSeries: TFastLineSeries;
   public
     { Public declarations }
+    startTime:TDateTime;
     f:textfile;
     stopEx:boolean;
-    qList:TStringList;
-    FPath:string;
-    FStudyCOunt:integer;
+    qList, fList:TStringList;
+    uploadPath, imagePath, serviceName, iniFile, serverPath, FPath:string;
+    vaxNumC19, vaxNumTotal, vaxLotC19, vaxLotTotal, FStudyCOunt:integer;
     QueryThread:TQueryThread;
     cData:TConnectData;
-    lotLoading:boolean;
+    fastLoad, lotLoading:boolean;
     procedure log(s:string);
     procedure log2(s:string);
     procedure logSetup(s:string);
     function DoLineCount:integer;
+    function LocalInfile:boolean;
     procedure openStudies;
     procedure saveSetup;
     procedure loadSetup;
+    procedure loadQuery(fn:string);
     procedure loadStudies;
     procedure LoadLotData;
+    procedure loadData(tableName:string;year:integer);
     function yearExist(tableName:string;year:integer):integer;
     procedure ExtractData(tableName:string;year:integer);
     procedure ExtractVax(tableName:string;year:integer);
@@ -339,6 +380,8 @@ type
     function skipToID(endID:integer;var lineNo:integer):boolean;
     procedure checkNumRecords(tableName:string; year, count:integer);
     procedure checkData(tableName:string);
+    procedure getVaxData;
+    procedure logClean(s:string);
     procedure loadFluData;
   end;
 
@@ -348,6 +391,36 @@ var
 implementation
 
 {$R *.dfm}
+
+function ShellEx(FileName: string; Params: string): bool;
+var
+  exInfo: TShellExecuteInfo;
+  Ph: DWORD;
+begin
+  FillChar(exInfo, SizeOf(exInfo), 0);
+  with exInfo do
+  begin
+    cbSize := SizeOf(exInfo);
+    fMask := SEE_MASK_NOCLOSEPROCESS or SEE_MASK_FLAG_DDEWAIT;
+    Wnd := GetActiveWindow();
+    exInfo.lpVerb := 'open';
+    exInfo.lpParameters := PChar(Params);
+    lpFile := PChar(FileName);
+    nShow := SW_HIDE;
+  end;
+  if ShellExecuteEx(@exInfo) then
+    Ph := exInfo.hProcess
+  else
+  begin
+    ShowMessage(SysErrorMessage(GetLastError));
+    Result := true;
+    exit;
+  end;
+  while WaitForSingleObject(exInfo.hProcess, 50) <> WAIT_OBJECT_0 do sleep(100);
+  CloseHandle(Ph);
+
+  Result := true;
+end;
 
 function sizeOfFile (const Filename : string) : Cardinal;
 var sr : tSearchRec;
@@ -511,7 +584,7 @@ begin
     keepConnection:=false;
     host:='127.0.0.1';
     port:=strToIntDef(cData.dbport, 3306);
-    databasename:=cData.dbname;
+    databasename:='vaers';
   end;
   workQuery:=TmySQLQuery.Create(nil);
   with workQuery do
@@ -701,26 +774,6 @@ begin
     meQueryLog.Lines.Insert(0, 'Query: "'+ReplaceCRLF(userQuery.SQL.Text)+'" - result: '+resField);
 end;
 
-procedure TmainForm.btnSymptomsClick(Sender: TObject);
-var tableName:string;
-    year, i:integer;
-begin
-  case cbDataType.ItemIndex of
-    //Domestic, USA
-  0: begin
-       tableName:='symptoms';
-       for i:=yearOf(now) downto 1990 do
-       if cbYears.Checked[abs(i-yearOf(now))] then
-         extractSymp(tableName, i);
-     end;
-    //Non-Domestic
-  1: begin
-       tableName:='ndsymptoms';
-       extractSymp(tableName, 0);
-     end;
-  end;
-end;
-
 procedure TmainForm.ExtractSymp(tableName:string;Year:integer);
 var fn:string;
    s, vid, symp2, symp3, symp4, symp5:string;
@@ -772,21 +825,21 @@ begin
   with MySQLBatch do
   begin
     vID:=getField(15);
-    sql.Text:='insert into '+tableName+' values(0,'+vid+','+inttostr(year)+',"'+getField(200)+'","'+getField(10)+'");';
+    sql.Text:='insert into '+tableName+' values(0,'+vid+','+inttostr(year)+',"'+getField(100)+'","'+getField(10)+'");';
 
-    symp2:=getField(200);
+    symp2:=getField(100);
     if length(symp2)>0 then
     sql.Text:=sql.Text+'insert into '+tableName+' values(0,'+vid+','+inttostr(year)+',"'+symp2+'","'+getField(10)+'");';
 
-    symp3:=getField(200);
+    symp3:=getField(100);
     if length(symp3)>0 then
     sql.Text:=sql.Text+'insert into '+tableName+' values(0,'+vid+','+inttostr(year)+',"'+symp3+'","'+getField(10)+'");';
 
-    symp4:=getField(200);
+    symp4:=getField(100);
     if length(symp4)>0 then
     sql.Text:=sql.Text+'insert into '+tableName+' values(0,'+vid+','+inttostr(year)+',"'+symp4+'","'+getField(10)+'");';
 
-    symp5:=getField(200);
+    symp5:=getField(100);
     if length(symp5)>0 then
     sql.Text:=sql.Text+'insert into '+tableName+' values(0,'+vid+','+inttostr(year)+',"'+symp5+'","'+getField(10)+'");';
     ExecSQL;
@@ -875,26 +928,6 @@ begin
   end;
 end;
 
-procedure TmainForm.btnVaxClick(Sender: TObject);
-var tableName:string;
-    year, i:integer;
-begin
-  case cbDataType.ItemIndex of
-    //Domestic, USA
-  0: begin
-       tableName:='vax';
-       for i:=yearOf(now) downto 1990 do
-       if cbYears.Checked[abs(i-yearOf(now))] then
-         extractVax(tableName, i);
-     end;
-    //Non-Domestic
-  1: begin
-       tableName:='ndvax';
-       extractVax(tableName, 0);
-     end;
-  end;
-end;
-
 procedure TmainForm.Button10Click(Sender: TObject);
 begin
   stopEx:=true;
@@ -911,6 +944,7 @@ end;
 procedure TmainForm.FormCreate(Sender: TObject);
 begin
   qList:=TStringList.Create;
+  fList:=TStringList.Create;
 
   dthSeries:=TFastLineSeries.Create(Self);
   c19dthSeries:=TFastLineSeries.Create(Self);
@@ -1017,6 +1051,7 @@ begin
 procedure TmainForm.FormDestroy(Sender: TObject);
 begin
   qList.Free;
+  fList.Free;
   dthSeries.Free;
   c19dthSeries.Free;
   indSeries.Free;
@@ -1134,6 +1169,25 @@ begin
   cbCalcYears.CheckAll(cbUnChecked, false, false);
 end;
 
+procedure TmainForm.Button14Click(Sender: TObject);
+var fn, s:string;
+    IORes, count:integer;
+begin
+  case cbVisDom.ItemIndex of
+    0: fn:='VAERS Patientdata - deaths for year '+cbVisYear.Text+'.txt';
+    1: fn:='VAERS Patientdata - non-domestic deaths.txt';
+  end;
+
+  if not fileExists(fn) then
+  begin
+    Log('Error opening patientdata inspections file: "'+fn+'", load aborted!');
+    Exit;
+  end;
+
+  meVisual.Lines.LoadFromFile(fn);
+  edVisCount.Text:=floattostrf(meVisual.Lines.count, ffNumber, 7, 0);
+end;
+
 procedure TmainForm.btnLotUpdateClick(Sender: TObject);
 begin
   LoadLotData;
@@ -1154,7 +1208,7 @@ begin
     cbLimit.TExt:='';
     exit;
   end;
-
+  cbLotType.Enabled:=false;
   lotLoading:=true;
   lotChart.Axes.Left.SetMinMax(0, 5000);
   lotChart.Axes.Right.SetMinMax(0, 5000);
@@ -1190,20 +1244,20 @@ begin
       if i mod 10000 = 0 then
       case cbLotType.ItemIndex of
       0:  begin
-        edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/25.622';
-        edLotPercent.Text:=floatToStrF(i/25622*100, ffFixed, 3, 2)+' %';
-        edPercent.Text:=floatToStrF(count/503520*100, ffFixed, 3, 2)+' %';
-        edADVReports.Text:=floattostrf(count, ffNumber, 8, 0)+'/503.520';
+        edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/'+floattostrf(vaxLotC19, ffNumber, 8, 0);
+        edLotPercent.Text:=floatToStrF(i/vaxLotC19*100, ffFixed, 3, 2)+' %';
+        edPercent.Text:=floatToStrF(count/vaxNumC19*100, ffFixed, 3, 2)+' %';
+        edADVReports.Text:=floattostrf(count, ffNumber, 8, 0)+'/'+floattostrf(vaxNumC19, ffNumber, 8, 0);
         edC19Inj.Text:=floattostrf(i, ffNumber, 8, 0)+'/'+floattostrf(i, ffNumber, 8, 0);
         application.ProcessMessages;
       end;
       1:  begin
         if c19Count>0 then
           edC19Share.Text:=floatTOStrF(c19count/i*100, ffFixed, 3, 2)+' %';
-        edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/154.196';
-        edLotPercent.Text:=floatToStrF(i/154196*100, ffFixed, 3, 2)+' %';
-        edPercent.Text:=floatToStrF(count/1394458*100, ffFixed, 3, 2)+' %';
-        edADVReports.Text:=floattoStrf(count, ffNumber, 8, 0)+'/1.394.458';
+        edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/'+floattostrf(vaxLotTotal, ffNumber, 8, 0);
+        edLotPercent.Text:=floatToStrF(i/vaxLotTotal*100, ffFixed, 3, 2)+' %';
+        edPercent.Text:=floatToStrF(count/vaxNumTotal*100, ffFixed, 3, 2)+' %';
+        edADVReports.Text:=floattoStrf(count, ffNumber, 8, 0)+'/'+floattostrf(vaxNumTotal, ffNumber, 8, 0);
         edC19Inj.Text:=floattostrf(c19count, ffNumber, 8, 0)+'/'+floattostrf(i, ffNumber, 8, 0);
         application.ProcessMessages;
       end;
@@ -1218,17 +1272,17 @@ begin
 
   case cbLotType.ItemIndex of
   0: begin
-   edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/25.622';
-   edLotPercent.Text:=floatToStrF(i/25622*100, ffFixed, 3, 2)+' %';
-   edPercent.Text:=floatToStrF(count/503520*100, ffFixed, 3, 2)+' %';
-   edADVReports.Text:=floattostrf(count, ffNumber, 8, 0)+'/503.520';
+   edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/'+floattostrf(vaxLotC19, ffNumber, 8, 0);
+   edLotPercent.Text:=floatToStrF(i/vaxLotC19*100, ffFixed, 3, 2)+' %';
+   edPercent.Text:=floatToStrF(count/vaxNumC19*100, ffFixed, 3, 2)+' %';
+   edADVReports.Text:=floattostrf(count, ffNumber, 8, 0)+'/'+floattostrf(vaxNumC19, ffNumber, 8, 0);
    edC19Inj.Text:=floattostrf(i, ffNumber, 8, 0)+'/'+floattostrf(i, ffNumber, 8, 0);
   end;
   1:  begin
-   edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/154.196';
-   edLotPercent.Text:=floatToStrF(i/154196*100, ffFixed, 3, 2)+' %';
-   edPercent.Text:=floatToStrF(count/1394458*100, ffFixed, 3, 2)+' %';
-   edADVReports.Text:=floattoStrf(count, ffNumber, 8, 0)+'/1.394.458';
+   edCountLot.Text:=floattostrf(i, ffNumber, 8, 0)+'/'+floattostrf(vaxLotTotal, ffNumber, 8, 0);
+   edLotPercent.Text:=floatToStrF(i/vaxLotTotal*100, ffFixed, 3, 2)+' %';
+   edPercent.Text:=floatToStrF(count/vaxNumTotal*100, ffFixed, 3, 2)+' %';
+   edADVReports.Text:=floattoStrf(count, ffNumber, 8, 0)+'/'+floattostrf(vaxNumTotal, ffNumber, 8, 0);
    if c19Count>0 then
      edC19Share.Text:=floatTOStrF(c19count/i*100, ffFixed, 3, 2)+' %';
    edC19Inj.Text:=floattostrf(c19count, ffNumber, 8, 0)+'/'+floattostrf(i, ffNumber, 8, 0);
@@ -1236,6 +1290,7 @@ begin
 
   end;
   lotLoading:=false;
+  cbLotType.Enabled:=true;
 end;
 
 procedure TmainForm.sgStatDrawCell(Sender: TObject; ACol, ARow: Integer;
@@ -1282,12 +1337,85 @@ begin
   cbCheckYears.CheckAll(cbUnChecked, false, false);
 end;
 
+procedure TmainForm.logClean(s:string);
+begin
+  meClean.Lines.Insert(0, timeToStr(now)+' - '+s);
+end;
+
 procedure TmainForm.Button6Click(Sender: TObject);
+var i:integer;
+
+procedure getNum;
+begin
+  with checkQuery do
+  begin
+    sql.Text:='select count(*) as num from vax where vax_type="COVID19";';
+    open;
+    if not (recordCount=0) then
+    begin
+      logClean('Number of covid19 injections : '+fieldByName('num').AsString);
+    end;
+    close;
+  end;
+  with checkQuery do
+  begin
+    sql.Text:='select count(*) as num from vax where vax_manu="UNKNOWN MANUFACTURER";';
+    open;
+    if not (recordCount=0) then
+    begin
+      logClean('Number of unknown covid10 lot manufacturers: '+fieldByName('num').AsString);
+    end;
+    close;
+  end;
+end;
+
+begin
+  //run a clean query for each of the lots in vaxlot tale
+  logClean('Starting vax table cleaning for vax_type="covid19"...');
+  getNum;
+
+  i:=0;
+  with lotQuery do
+  begin
+    sql.Text:='select * from vaxdist;';
+    open;
+    if not (recordCount=0) then
+    while not eof do
+    begin
+      inc(i);
+      edCleanCount.Text:=inttostr(i)+'/'+inttostr(recordcount);
+      application.ProcessMessages;
+      //first correct all lots in covid19 lot list where type is missing, made in 2021
+      checkQuery.SQL.Text:='update vax set vax_type="COVID19" where vax_lot="'+fieldByName('vax_lot').AsString+'" and vax_type="UNK" and year=2021 and vax_id>0;';
+      checkQuery.ExecSQL;
+
+      checkQuery.SQL.Text:='update vax set vax_manu="'+fieldByName('vax_manu').AsString+'" where vax_lot="'+fieldByName('vax_lot').AsString+
+        '" and (vax_manu="UNKNOWN MANUFACTURER" or vax_manu<>"'+fieldByName('vax_manu').AsString+'") and year=2021 and vax_id>0;';
+      checkQuery.ExecSQL;
+      if stopEx then
+      begin
+        application.ProcessMessages;
+        logClean('Operation aborted by user');
+        close;
+        exit;
+      end;
+      getNum;
+      next;
+    end;
+    close;
+  end;
+
+  logClean('Done running queries, now checking...');
+  getNum;
+  logClean('Finished vax table cleaning for vax_type="covid19"');
+end;
+
+procedure TmainForm.btnLoadStudiesClick(Sender: TObject);
 begin
   loadStudies;
 end;
 
-procedure TmainForm.Button7Click(Sender: TObject);
+procedure TmainForm.btnCreateTablesClick(Sender: TObject);
 var sl:TStringList;
     s:string;
     IORes:integer;
@@ -1339,7 +1467,71 @@ begin
   LogSetup('Success! Database tables created OK. You may now proceed to VAERS data extraction.');
 end;
 
-procedure TmainForm.Button8Click(Sender: TObject);
+procedure TmainForm.btnLoadLotListClick(Sender: TObject);
+var year, i:integer;
+    s, fn:string;
+    f:textfile;
+begin
+  logSetup('Deleting vaxlot table...');
+  with checkQUery do
+  begin
+    sql.text:='delete from vaxlot where vaxlot_id>0;';
+    ExecSQL;
+  end;
+
+  logSetup('Running table query...');
+  with checkQUery do
+  begin
+    sql.text:='insert into vaxlot (vaxlot_id, vax_type, vax_manu, vax_lot, year, injections) select 0, vax_type, vax_manu, vax_lot, year, count(*) as injections '+
+     'from vax group by vax_lot order by injections desc, vax_type, year;';
+    ExecSQL;
+  end;
+  logSetup('Table query finished OK.');
+
+  exit;
+
+  fn:='vaxlot.sql';
+
+  if (not fileExists(fn)) or (SizeOfFile(fn)=0) then
+  begin
+  i:=0;
+    logSetup('Creating insert query...');
+    assignFile(f,fn);
+    rewrite(f);
+    with checkQuery do
+    begin
+      sql.text:='select distinct vax_lot, vax_type, vax_manu, year, count(*) as injections from vax where length(vax_lot)>0 '+
+      'group by vax_lot, vax_type, vax_manu, year order by injections desc, vax_type, year;';
+      open;
+      if not (recordCount=0) then
+      while not eof do
+      begin
+        inc(i);
+        s:='insert into vaxlot values(0, "'+fieldByName('vax_type').AsString+'","'+fieldByName('vax_manu').AsString+'","'+fieldByName('vax_lot').AsString+'",'+
+        fieldByName('year').AsString+','+fieldByName('injections').AsString+');';
+        writeln(f, s);
+        edInsCount.Text:=inttostr(i);
+        application.ProcessMessages;
+        next;
+      end;
+      close;
+      closeFile(f);
+    end;
+  end;
+
+  if (not fileExists(fn)) or (SizeOfFile(fn)=0) then
+  begin
+    logSetup('Error creating insert query file!');
+    Exit;
+  end else logSetup(' Success! Insert query created.');
+
+  exit;
+
+  loadQuery(extractFilePath(application.ExeName)+fn);
+  Logsetup(' Success! Finished inserting data to DB.');
+end;
+
+procedure TmainForm.btnConnectClick(Sender: TObject);
 begin
   //check db
   with mySQL do
@@ -1351,9 +1543,10 @@ begin
   end;
 end;
 
-procedure TmainForm.Button9Click(Sender: TObject);
+procedure TmainForm.btnDownloadClick(Sender: TObject);
 begin
   //download 2022 data from a server
+  showMessage('Not yet implemented');
 end;
 
 procedure TmainForm.btnClearClick(Sender: TObject);
@@ -1434,58 +1627,148 @@ begin
   ShellExecute(Handle, 'open', PChar(studyQuery.FieldByName('url').AsString), '', '', SW_SHOW);
 end;
 
+procedure TmainForm.loadQuery(fn:string);
+var progpath, param:string;
+    //Zip:TZipFile;
+    zipFilename, updateName, CmdLine:string;
+    startTime:TDateTIme;
+    fSize:int64;
+    res, error:integer;
+    server:string;
+    sl:TStringList;
 
-procedure TmainForm.Button15Click(Sender: TObject);
-var year, i:integer;
-    s:string;
-
+function ShellEx(FileName: string; Params: string): bool;
+var
+  exInfo: TShellExecuteInfo;
+  Ph: DWORD;
 begin
-  i:=0;
-  if not fileExists('vaxlot.sql') then
+  FillChar(exInfo, SizeOf(exInfo), 0);
+  with exInfo do
   begin
-    meCalcLog.Lines.Insert(0, timeToStr(now)+' Creating insert query...');
-    assignFile(f,'vaxlot.sql');
-    rewrite(f);
-    with checkQUery do
-    begin
-      sql.text:='select vax_type, vax_lot, vax_manu, year, count(*) as injections from vax group by vax_lot order by injections desc, vax_type, year;';
-      open;
-      if not (recordCount=0) then
-      while not eof do
-      begin
-        inc(i);
-        s:='insert into vaxlot values(0, "'+fieldByName('vax_type').AsString+'","'+fieldByName('vax_manu').AsString+'","'+fieldByName('vax_lot').AsString+'",'+
-        fieldByName('year').AsString+','+fieldByName('injections').AsString+');';
-        writeln(f, s);
-        edCalcCount.Text:=inttostr(i);
-        application.ProcessMessages;
-        next;
-      end;
-      close;
-      closeFile(f);
-    end;
-    meCalcLog.Lines.Insert(0, timeToStr(now)+' Success! Insert query created.');
+    cbSize := SizeOf(exInfo);
+    fMask := SEE_MASK_NOCLOSEPROCESS or SEE_MASK_FLAG_DDEWAIT;
+    Wnd := GetActiveWindow();
+    exInfo.lpVerb := 'open';
+    exInfo.lpParameters := PChar(Params);
+    lpFile := PChar(FileName);
+    nShow := SW_HIDE;
   end;
+  if ShellExecuteEx(@exInfo) then
+    Ph := exInfo.hProcess
+  else
+  begin
+    ShowMessage(SysErrorMessage(GetLastError));
+    Result := true;
+    exit;
+  end;
+  while WaitForSingleObject(exInfo.hProcess, 50) <> WAIT_OBJECT_0 do sleep(100);
+  CloseHandle(Ph);
 
-  meCalcLog.Lines.Insert(0, timeToStr(now)+' Now inserting data to DB...');
-  i:=0;
-  assignFile(f,'vaxlot.sql');
-  reset(f);
-  while not eof(f) do
-  with checkQUery do
-  begin
-    readln(f, s);
-    sql.text:=s;
-    ExecSQL;
-    inc(i);
-    edCalcCount.Text:=inttostr(i);
-    application.ProcessMessages;
-  end;
-  closeFile(f);
-  meCalcLog.Lines.Insert(0, timeToStr(now)+' Success! Finished inserting data to DB.');
+  Result := true;
 end;
 
+begin
+  param:=' -u '+cData.username+' -p ' +cData.password+ ' vaers < "' +fn+'"';
+  startTime:=now;
+  server:=StringReplace(serverPath, 'mysqld.exe','mysql.exe',[rfReplaceAll]);
+  sl:=TStringList.create;
+  sl.Add('cmd.exe /c "'+server+'" -u '+cData.username+' -p'+cData.password+' vaers < "'+fn+'"');
+  sl.SaveToFile(extractFilePath(fn)+'insert.bat');
+  sl.Free;
+  //res:=ShellExecute(0, 'open', 'd:\insert.bat',  nil, '', SW_SHOW);
+  //if res>=32 then
+  logSetup('Loading Query Data...');
+   if ShellEx(extractFilePath(fn)+'insert.bat','') then
+  begin
+     logSetup('Query Data loaded OK!');
+  end else logSetup('Error');
+end;
 
+procedure TmainForm.btnLoadC19LotListClick(Sender: TObject);
+begin
+  logSetup('Deleting vaxdist table...');
+  with checkQUery do
+  begin
+    sql.text:='delete from vaxdist where vaxdist_id>0;';
+    ExecSQL;
+  end;
+
+  logSetup('Running table query...');
+  with checkQUery do
+  begin
+    sql.text:='insert into vaxdist (vaxdist_id, vax_lot, vax_manu, injections) select 0, vax_lot, vax_manu, count(*) as injections '+
+      'from vaers.vax where vax_type="COVID19" and length(vax_lot)>0 and vax_lot<>"unknown" and vax_lot<>"unk" '+
+      'group by vax_lot, vax_manu order by injections desc;';
+    ExecSQL;
+  end;
+  logSetup('Table query finished OK.');
+end;
+
+procedure TmainForm.Button16Click(Sender: TObject);
+var tableName:string;
+begin
+  case cbTableDatatype.ItemIndex of
+  0: case cbTableType.ItemIndex of
+    0: TableName:='data';
+    1: TableName:='symptoms';
+    2: TableName:='vax';
+  end;
+  1: case cbTableType.ItemIndex of
+    0: TableName:='nddata';
+    1: TableName:='ndsymptoms';
+    2: TableName:='ndvax';
+  end;
+  end;
+
+  with tableQUery do
+  begin
+    if active then close;
+    sql.Text:='select vaers_id, year, recvdate, state, age_yrs, sex, rpt_date, substring(cast(symptom_text as char),1,500) as symptom_text, '+
+    'died, datedied, l_threat, er_visit, hospital, hospdays, x_stay, disable, recovd, vax_date, onset_date, numdays, '+
+    ' substring(cast(lab_data as char),1,100) as lab_data, v_adminby, v_fundby, other_meds, cur_ill, '+
+    ' substring(cast(history as char),1,100) as history, prior_vax, splttype, form_vers, todays_date, birth_defect, ofc_visit, er_ed_visit, '+
+    ' substring(allergies, 1, 100) as allergies from '+tableName+' where year=2021;';
+    open;
+    edTableRecs.Text:=inttostr(recordCount);
+  end;
+end;
+
+procedure TmainForm.Button17Click(Sender: TObject);
+var i:integer;
+    sl:TStringList;
+begin
+
+  sl:=TStringList.Create;
+
+  with tableQuery do
+  for i:=46715 to 1500000 do
+  begin
+     sl.Add('insert into test values(0, '+inttostr(i)+');');
+     if i mod 100 = 0 then
+     begin
+       sqlBatch.SQL.Text:=sl.Text;
+       sqlBatch.ExecSQL;
+       sqlBatch.SQL.Text:='';
+       sl.Clear;
+       edTableRecs.Text:=inttostr(i);
+       application.ProcessMessages;
+     end;
+  end;
+
+  sl.Free;
+
+  exit;
+
+  if tableQuery.Active then tableQUery.Close;
+end;
+
+procedure TmainForm.Button18Click(Sender: TObject);
+begin
+  if MessageDlg('Do you want to set global variable "local_infile" to true? SUPER privileges needed, e.g. root account.',mtWarning, mbYesNO,0)=mrNo then exit;
+  mysql.execute('set global local_infile=true;');
+  //reconnect to get infile/fastload status
+  btnConnectClick(Self);
+end;
 
 procedure TmainForm.btnCalcClick(Sender: TObject);
 var year, i:integer;
@@ -1785,13 +2068,13 @@ begin
     q:='insert into '+tableName+' (VAERS_ID, YEAR, VAX_TYPE, VAX_MANU, VAX_LOT, VAX_DOSE_SERIES, VAX_ROUTE, VAX_SITE, VAX_NAME) values('+
     getField(15)+','+      //VAERS_ID        max length
     inttostr(year)+',"'+   //add year field
-    getField(100)+'","'+   //VAX_TYPE        10
-    getField(100)+'","'+   //VAX_MANU        33
-    getField(100)+'","'+   //VAX_LOT         15
-    getField(10)+'","'+    //VAX_DOSE_SERIES  3
-    getField(10)+'","'+    //VAX_ROUTE        3
-    getField(10)+'","'+    //VAX_SITE         2
-    getField(100)+'")';    //VAX_NAME        49
+    getField(15)+'","'+    //VAX_TYPE        15
+    getField(40)+'","'+    //VAX_MANU        40
+    getField(15)+'","'+    //VAX_LOT         15
+    getField(3)+'","'+     //VAX_DOSE_SERIES  3
+    getField(6)+'","'+     //VAX_ROUTE        6
+    getField(6)+'","'+     //VAX_SITE         6
+    getField(100)+'")';    //VAX_NAME        100
     //dataEdit.Text:=sql.Text;
     sql.Text:=q;
     //ExecSQL;
@@ -1902,8 +2185,6 @@ begin
   if result then lineNo:=i;
 end;
 
-
-
 function TmainForm.DoLineCount:integer;
 var i:integer;
     s:string;
@@ -2008,7 +2289,7 @@ begin
   if directoryExists(edPath.Text) then
     FPath:=edPath.Text else
   begin
-    showMessage('Specified path for VAERS data files does not exist and was not saved');
+    showMessage('Path for VAERS data files does not exist and was not saved');
     Exit;
   end;
   assignFile(f, 'setup.txt');
@@ -2026,9 +2307,142 @@ begin
   mySQL.Close;
 end;
 
+procedure TmainForm.mysqlAfterConnect(Sender: TObject);
+begin
+  logSetup('MySQL Database connected OK');
+  if mySQL.Connected then fastLoad:=localInFile;
+
+  case fastLoad of
+    true: begin
+      LogSetup('DB Fastload activated!');
+      sbMain.Panels[1].Text:='Fastload Activated';
+    end;
+    false: begin
+      LogSetup('DB Fastload NOT activated! Upgrade DB user privileges or set "local_infile=1" in DB initialization file "my.ini"');
+      sbMain.Panels[1].Text:='Fastload not Activated';
+    end;
+  end;
+
+  sbMain.Panels[0].Text:='DB: Connected';
+end;
+
+function TmainForm.LocalInfile:boolean;
+begin
+  result:=false;
+  with checkQuery do
+  begin
+    sql.Text:='show global variables like "local_infile";';
+    open;
+    if not (recordCount=0) then
+      result:=sameText(fields[1].AsString, 'ON');
+    close;
+  end;
+end;
+
 procedure TmainForm.FormShow(Sender: TObject);
 var i:integer;
+
+function GetServiceStatus(sService: String) : TServiceStatus;
+var
+  schm,
+  schs: SC_Handle;
+  ss: TServiceStatus;
+  dwChkP: DWord;
+  sMachine:string;
 begin
+  sMachine:='\\'+GetEnvironmentVariable('COMPUTERNAME');
+  schm := OpenSCManager(PChar(sMachine), nil, SC_MANAGER_ENUMERATE_SERVICE);
+  if (schm>0) then
+  begin
+    schs := OpenService(schm, PChar(sService), SERVICE_QUERY_STATUS);
+    if (schs>0) then
+    begin
+        if not (QueryServiceStatus(schs, result)) then  RaiseLastOSError;
+      CloseServiceHandle(schs);
+    end else  RaiseLastOSError;
+    CloseServiceHandle(schm);
+  end;
+end;
+
+function GetRegInfo(s:string):string;
+var
+  i: integer;
+  appid: string;
+begin
+  result:='';
+  with TRegistry.Create do try
+    RootKey := HKEY_LOCAL_MACHINE;
+    access  := KEY_READ;
+    if not OpenKey('SYSTEM\CurrentControlSet\Services\'+s+'\', False ) then
+    begin
+      logSetup('MySQL Service record not found!');
+      exit;
+    end;
+    if valueExists('ImagePath') then result:=readString('ImagePath');
+  finally
+    free;
+  end
+end;
+
+function getUploadPath:string;
+var s:TStringList;
+    i:integer;
+begin
+  //secure-file-priv="C:/ProgramData/MySQL/MySQL Server 8.0/Uploads"
+  //local_infile = 1
+  result:='N/A';
+  s:=TStringList.Create;
+  s.LoadFromFile(iniFile);
+  for i:=0 to s.Count-1 do
+  if pos('secure-file-priv', s[i])<>0 then
+    result:=copy(s[i], pos('="',s[i])+2, length(s[i])-17);
+  s.Free;
+end;
+
+procedure getMySQLInfo;
+var res:integer;
+    s:string;
+begin
+  serviceName:='';
+  if not fileExists('scList.txt') then
+    res:=ShellExecute(Handle, nil, 'cmd.exe', '/c sc query type=service > scListX.txt', '', SW_HIDE);
+  if fileExists('scList.txt') then
+  begin
+    assignFile(f, 'scList.txt');
+    reset(f);
+    while (not eof(f)) and (length(serviceName)=0) do
+    begin
+      readln(f,s);
+      if pos('MySQL',s)<>0 then
+      //SERVICE_NAME: MySQL80
+      begin
+        serviceName:=copy(s, pos(': ',s)+2, length(s));
+        imagePath:=getRegInfo(serviceName);
+        if length(imagePath)>0 then
+        begin
+          logSetup('MySQL DB running, service name="'+serviceName+'"');
+          iniFile:=copy(imagePath, pos('file=',imagePath)+6, length(imagePath));
+          iniFile:=copy(iniFile, 1, pos('"',iniFile)-1);
+          logSetup('MySQL Inifile="'+inifile+'"');
+          serverPath:=copy(imagePath, 2, pos('exe"',imagePath)+1);
+          logSetup('MySQL ServerPath="'+serverPath+'"');
+          uploadPath:=getUploadPath;
+          logSetup('MySQL Uploadpath="'+uploadPath+'"');
+        end else logSetup('MySQL Registry ImagePath not found!');
+      end;
+    end;
+    closeFile(f);
+  end;
+  //imagePath="C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.0\my.ini" MySQL80
+end;
+
+
+begin
+  vaxLotC19:=0;
+  vaxLotTotal:=0;
+  getMySQLInfo;
+  pcMain.ActivePage:=tsSetup;
+
   loadSetup;
   if length(cData.username)>0 then
   with mySQL do
@@ -2052,19 +2466,62 @@ begin
     cbCheckYears.Items.Add(inttostr(yearOf(now)-i));
     cbCalcYears.Items.Add(inttostr(yearOf(now)-i));
     cbYearsChecked.Items.Add(inttostr(yearOf(now)-i));
+    cbVisYear.Items.Add(inttostr(yearOf(now)-i));
   end;
 
-  if MySQL.Connected then
-  begin
-    btnUpdateClick(Self);
-    btnLotUpdateClick(Self);
-  end;
+  cbVisYear.ItemIndex:=0;
 
   vaxChart.Title.Text.Text:='';
   lotChart.Title.Text.Text:='';
-  openStudies;
+
   width:=1420;
   height:=810;
+end;
+
+
+procedure TmainForm.getVaxData;
+begin
+  //vaxLotC19, vaxLotTotal
+  //all vax lots sorted by lot, number of injections
+  with checkQuery do
+  begin
+    sql.Text:='select count(*) as num from vaxlot;';
+    open;
+    if not (recordCOunt=0) then
+      vaxLotTotal:=fieldByName('num').AsInteger;
+    close;
+  end;
+  //covid19 injection lots sorted by lot, manufacturer, number of injections
+  with checkQuery do
+  begin
+    sql.Text:='select count(*) as num from vaxdist;';
+    open;
+    if not (recordCOunt=0) then
+      vaxLotC19:=fieldByName('num').AsInteger;
+    close;
+  end;
+
+  //SELECT count(distinct vax_id) FROM vax
+  //number of vax events
+   with checkQuery do
+  begin
+    sql.Text:='SELECT count(*) as num FROM vax;';
+    open;
+    if not (recordCOunt=0) then
+      vaxNumTotal:=fieldByName('num').AsInteger;
+    close;
+  end;
+
+  //number of C19 events
+   with checkQuery do
+  begin
+    sql.Text:='SELECT count(*) as num FROM vax where vax_type="covid19";';
+    open;
+    if not (recordCOunt=0) then
+      vaxNumC19:=fieldByName('num').AsInteger;
+    close;
+  end;
+
 end;
 
 procedure TmainForm.openStudies;
@@ -2121,6 +2578,20 @@ begin
   end;
   closeFile(f);
   Log('Success! Studies data from file: "'+fn+'" loaded into database!');
+end;
+
+procedure TmainForm.loadTimerTimer(Sender: TObject);
+begin
+  loadTImer.Enabled:=false;
+  if MySQL.Connected then
+  begin
+    logSetup('Loading LOT tables row counts...');
+    getVaxData;
+    logSetup('LOT tables row counts loaded OK');
+    btnUpdateClick(Self);
+    btnLotUpdateClick(Self);
+    openStudies;
+  end;
 end;
 
 procedure TmainForm.btnReadAllClick(Sender: TObject);
@@ -2226,20 +2697,17 @@ begin
   meSetupLog.Lines.Insert(0, TimeToStr(now)+' - '+s);
 end;
 
-procedure TmainForm.MySQLAfterConnect(Sender: TObject);
+
+procedure TmainForm.mysqlAfterDisconnect(Sender: TObject);
 begin
-  logSetup('Database connected OK');
+  logSetup('MySQL Database DISconnected OK');
+  sbMain.Panels[0].Text:='DB: not Connected';
 end;
 
-procedure TmainForm.MySQLAfterDisconnect(Sender: TObject);
-begin
-  logSetup('Database DISconnected OK');
-end;
-
-procedure TmainForm.MySQLConnectionFailure(Connection: TMySQLDatabase;
+procedure TmainForm.mysqlConnectionFailure(Connection: TMySQLDatabase;
   Error: string);
 begin
-  logSetup('Database connection error: '+error);
+  logSetup('MySQL Database connection error: '+error);
 end;
 
 procedure TmainForm.log2(s:string);
@@ -2257,98 +2725,342 @@ begin
   pbQuery.Position:=pbQuery.Position+1;
 end;
 
-procedure TmainForm.btnBackupClick(Sender: TObject);
-var fn, s, tableName:string;
-    i:integer;
+procedure TmainForm.btnSymptomsClick(Sender: TObject);
+var tableName:string;
+    year, i:integer;
 begin
-  with userQUery do
-  begin
-    case cbBackupTable.ItemIndex of
-      0: tableName:='data';
-      1: tableName:='symptoms';
-      2: tableName:='vax';
-      3: tableName:='nddata';
-      4: tableName:='ndsymptoms';
-      5: tableName:='ndvax';
-    end;
-    sql.Text:='select * from '+tableName+' limit 1000';
-    fn:=tableName+'-backup'+copy(cbType.Items[cbType.ItemIndex],1,4);
-    edFile.Text:=fn;
-    assignFile(f, fn);
-    rewrite(f);
-    i:=0;
-    open;
-    //while not eof do
-    while i<1000 do
-    begin
-    case cbBackupTable.ItemIndex of
-    //data tables
-    0, 3: case cbType.ItemIndex of
-        0: s:='insert into '+tableName+' values('+fieldByName('vaers_id').AsString+',"'+fieldByName('RECVDATE').AsString+'","'
-        +fieldByName('STATE').AsString+'",'+fieldByName('AGE_YRS').AsString+','+fieldByName('CAGE_YR').AsString+','
-        +fieldByName('CAGE_MO').AsString+',"'+fieldByName('SEX').AsString+'","'+fieldByName('RPT_DATE').AsString+'","'
-        +fieldByName('SYMPTOM_TEXT').AsString+'","'+fieldByName('DIED').AsString+'","'+fieldByName('DATEDIED').AsString+'","'
-        +fieldByName('L_THREAT').AsString+'","'+fieldByName('ER_VISIT').AsString+'","'+fieldByName('HOSPITAL').AsString+'",'
-        +fieldByName('HOSPDAYS').AsString+',"'+fieldByName('X_STAY').AsString+'","'+fieldByName('DISABLE').AsString+'","'
-        +fieldByName('RECOVD').AsString+'","'+fieldByName('VAX_DATE').AsString+'","'+fieldByName('ONSET_DATE').AsString+'",'
-        +fieldByName('NUMDAYS').AsString+',"'+fieldByName('LAB_DATA').AsString+'","'+fieldByName('V_ADMINBY').AsString+'","'
-        +fieldByName('V_FUNDBY').AsString+'","'+fieldByName('OTHER_MEDS').AsString+'","'+fieldByName('CUR_ILL').AsString+'","'
-        +fieldByName('HISTORY').AsString+'","'+fieldByName('PRIOR_VAX').AsString+'","'+fieldByName('SPLTTYPE').AsString+'",'
-        +fieldByName('FORM_VERS').AsString+',"'+fieldByName('TODAYS_DATE').AsString+'","'+fieldByName('BIRTH_DEFECT').AsString+'","'
-        +fieldByName('OFC_VISIT').AsString+'","'+fieldByName('ER_ED_VISIT').AsString+'","'+fieldByName('ALLERGIES').AsString+'");';
-        1: s:='insert into '+tableName;
-        2: s:='insert into '+tableName;
-      end;
-    //symptom tables
-    1, 4: case cbType.ItemIndex of
-        0:  s:='insert into '+tableName+' values('+fieldByName('vaers_id').AsString+',"'+fieldByName('symptom').AsString+'","'
-        +fieldByName('symptom_version').AsString+'");';
-        1: s:=fieldByName('vaers_id').AsString+',"'+fieldByName('symptom').AsString+'","'+fieldByName('symptom_version').AsString+'"';
-        2: s:=fieldByName('vaers_id').AsString+chr(9)+'"'+fieldByName('symptom').AsString+'"'+chr(9)+'"'+fieldByName('symptom_version').AsString+'"';
-      end;
-    //vax tables
-    2, 5: case cbType.ItemIndex of
-        0: s:='insert into '+tableName+' values('+fieldByName('vaers_id').AsString+',"'+fieldByName('vax_type').AsString+'","'
-        +fieldByName('vax_manu').AsString+'","'+fieldByName('vax_lot').AsString+'","'+fieldByName('vax_dose_series').AsString+'","'
-        +fieldByName('vax_route').AsString+'","'+fieldByName('vax_site').AsString+'","'+fieldByName('vax_name').AsString+'");';
-        1: s:=fieldByName('vaers_id').AsString+',"'+fieldByName('vax_type').AsString+'","'
-        +fieldByName('vax_manu').AsString+'","'+fieldByName('vax_lot').AsString+'","'+fieldByName('vax_dose_series').AsString+'","'
-        +fieldByName('vax_route').AsString+'","'+fieldByName('vax_site').AsString+'","'+fieldByName('vax_name').AsString+'"';
-        2: s:=fieldByName('vaers_id').AsString+chr(9)+'"'+fieldByName('vax_type').AsString+'"'+chr(9)+'"'
-        +fieldByName('vax_manu').AsString+'"'+chr(9)+'"'+fieldByName('vax_lot').AsString+'"'+chr(9)+'"'+fieldByName('vax_dose_series').AsString+'"'+chr(9)+'"'
-        +fieldByName('vax_route').AsString+'"'+chr(9)+'"'+fieldByName('vax_site').AsString+'"'+chr(9)+'"'+fieldByName('vax_name').AsString+'"';
-      end;
-    end;
-      inc(i);
-      edRows.Text:=inttostr(i);
-      application.ProcessMessages;
-      writeln(f, s);
-      next;
-    end;
-    close;
+  startTime:=now;
+  case cbDataType.ItemIndex of
+    //Domestic, USA
+  0: begin
+       tableName:='SYMPTOMS';
+       for i:=yearOf(now) downto 1990 do
+       if cbYears.Checked[abs(i-yearOf(now))] then
+       begin
+         case fastLoad of
+           true: loadData(tableName, i);
+           false: extractData(tableName, i);
+         end;
+         if stopEx then
+         begin
+           Log('Data extraction aborted by user!');
+           exit;
+         end;
+       end;
+     end;
+    //Non-Domestic
+  1: begin
+       tableName:='NDSYMPTOMS';
+       case fastLoad of
+         true: loadData(tableName, 0);
+         false: extractSymp(tableName, 0);
+       end;
+     end;
   end;
-  closeFile(f);
-  showMessage('Backup of table: '+tableName+' finished, file: '+fn);
+  Log('Data extraction finished, time: '+inttostr(secondsBetween(now, startTime))+' secs.');
+  cleanTimer.Enabled:=true;
+end;
+
+procedure TmainForm.btnVaxClick(Sender: TObject);
+var tableName:string;
+    year, i:integer;
+begin
+  startTime:=now;
+  case cbDataType.ItemIndex of
+    //Domestic, USA
+  0: begin
+       tableName:='VAX';
+       for i:=yearOf(now) downto 1990 do
+       if cbYears.Checked[abs(i-yearOf(now))] then
+       begin
+         case fastLoad of
+           true: loadData(tableName, i);
+           false: extractData(tableName, i);
+         end;
+         if stopEx then
+         begin
+           Log('Data extraction aborted by user!');
+           exit;
+         end;
+       end;
+     end;
+    //Non-Domestic
+  1: begin
+       tableName:='NDVAX';
+       case fastLoad of
+         true: loadData(tableName, 0);
+         false: extractVax(tableName, 0);
+       end;
+     end;
+  end;
+  Log('Data extraction finished, time: '+inttostr(secondsBetween(now, startTime))+' secs.');
+  cleanTimer.Enabled:=true;
 end;
 
 procedure TmainForm.btnDataClick(Sender: TObject);
 var tableName:string;
     year, i:integer;
 begin
+  startTime:=now;
   case cbDataType.ItemIndex of
     //Domestic, USA
   0: begin
-       tableName:='data';
+       tableName:='DATA';
        for i:=yearOf(now) downto 1990 do
        if cbYears.Checked[abs(i-yearOf(now))] then
+       begin
+         {case fastLoad of
+           true: loadData(tableName, i);
+           false: extractData(tableName, i);
+         end;}
          extractData(tableName, i);
+         if stopEx then
+         begin
+           Log('Data extraction aborted by user!');
+           exit;
+         end;
+       end;
      end;
     //Non-Domestic
   1: begin
-       tableName:='nddata';
-       extractData(tableName, 0);
+       tableName:='NDDATA';
+       case fastLoad of
+         true: loadData(tableName, 0);
+         false: extractData(tableName, 0);
+       end;;
      end;
   end;
+  Log('Data extraction finished, time: '+inttostr(secondsBetween(now, startTime))+' secs.');
+  cleanTimer.Enabled:=true;
+end;
+
+procedure TmainForm.loadData(tableName:string;year:integer);
+var fn2, fn3, fn,s:string;
+    i, lineNo, IORes, passNo:integer;
+    f, f2, f3:textfile;
+    sl:TStringList;
+
+function commaReplace(s:string):string;
+var i:integer;
+    inString:boolean;
+    s2:string;
+begin
+  //replace each comma within double quotes with semicolon, and then remove double quotes
+  //so we can use MySQL LOAD DATA function to load the .csv directly
+  //first remove dual double quotes
+  s:=stringReplace(s,'""','',[rfReplaceAll]);
+  inString:=false;
+  for i:=1 to length(s) do
+  begin
+    if s[i]='"' then
+      inString:=not inString
+      else
+      if inString and (s[i]=',') then
+        s[i]:=';';
+  end;
+  s2:=stringReplace(s,'"','',[rfReplaceAll]);
+  //convert boolean Y to 1 in the right places
+  result:=stringReplace(s2,',Y,',',1,',[rfReplaceAll]);
+end;
+
+procedure convertSympFile;
+var s, vid, symp, sympver:string;
+    i:integer;
+begin
+  //convert file to single symptom structure, before adding unique index and year, and loading into DB
+  fn3:=uploadPath+'/'+inttostr(Year)+'VAERS'+tableName+'CNV2.csv';
+  reset(f2);
+  assignFile(f3, fn3);
+  rewrite(f3);
+  while not eof(f2) do
+  begin
+    readln(f2, s);
+    sl.DelimitedText:=s;
+    vID:=sl[0];
+    for i:=1 to round(pred(sl.Count)/2) do
+    begin
+      symp:=trim(sl[i*2-1]);
+      sympVer:=trim(sl[i*2]);
+      if (length(symp)>0) and (not sameText(vID,'VAERS_ID')) then
+        writeln(f3, vID+','+symp+','+sympVer);
+    end;
+  end;
+  closeFile(f2);
+  closeFile(f3);
+end;
+
+procedure loadDBData;
+begin
+  if sameText(tableName,'vax') then
+  with checkQUery do
+    begin
+      sql.Text:='LOAD DATA LOCAL INFILE "'+fn2+'"'+
+        ' INTO TABLE vaers.'+tableName+
+        ' CHARACTER SET latin1 FIELDS TERMINATED BY "," IGNORE '+inttostr(passNo)+' LINES '+
+        ' (@vaers_id, @vax_type, @vax_manu, @vax_lot, @vax_dose_series, @vax_route, @vax_site, @vax_name) '+
+        'set vax_id=0, vaers_id=@vaers_id, year='+inttostr(year)+', vax_type=@vax_type, vax_manu=@vax_manu, vax_lot=@vax_lot, '+
+        'vax_dose_series=@vax_dose_series, vax_route=@vax_route, vax_site=substring(@vax_site,1,6), vax_name=substring(@vax_name,1,100);';
+      execSQL;
+    end;
+  if sameText(tableName,'data') then
+  with checkQUery do
+    begin
+      sql.Text:='LOAD DATA LOCAL INFILE "'+fn2+'" '+
+        'INTO TABLE vaers.'+tableName+
+        ' CHARACTER SET latin1 FIELDS TERMINATED BY "," IGNORE '+inttostr(passNo)+' LINES '+
+        '(@vaers_id, @recvdate, @state, @age_yrs, @cage_yr, @cage_mo, @sex, @rpt_date, @symptom_text, @died, '+
+        '@datedied, @l_threat, @er_visit, @hospital, @hospdays, @x_stay, @disable, @recovd, @vax_date, @onset_date, '+
+        '@numdays, @lab_data, @v_adminby, @v_fundby, @other_meds, @cur_ill, @history, @prior_vax, @splttype, @form_vers, '+
+        '@todays_date, @birth_defect, @ofc_visit, @er_ed_visit, @allergies) '+
+        'set vaers_id=@vaers_id, year='+inttostr(year)+', recvdate=@recvdate, state=@state, age_yrs=@age_yrs, '+
+        'cage_yr=@cage_yr, cage_mo=@cage_mo, sex=@sex, rpt_date=@rpt_date, symptom_text=@symptom_text, died=@died, '+
+        'datedied=@datedied, l_threat=@l_threat, er_visit=@er_visit, hospital=@hospital, hospdays=@hospdays, '+
+        'x_stay=@x_stay, disable=@disable, recovd=@recovd, vax_date=@vax_date, onset_date=@onset_date, numdays=@numdays, '+
+        'lab_data= @lab_data, v_adminby= @v_adminby, v_fundby=@v_fundby, other_meds=@other_meds, cur_ill=@cur_ill, '+
+        'history=@history, prior_vax=@prior_vax, splttype=@splttype, form_vers=@form_vers, todays_date=@todays_date, '+
+        'birth_defect=@birth_defect, ofc_visit=@ofc_visit, er_ed_visit=@er_ed_visit, allergies=@allergies;';
+      execSQL;
+    end;
+  if sameText(tableName,'symptoms') then
+  with checkQUery do
+    begin
+      sql.Text:='LOAD DATA LOCAL INFILE "'+fn3+'"'+
+        ' INTO TABLE vaers.'+tableName+' CHARACTER SET latin1 FIELDS TERMINATED BY "," '+
+        '(@vaers_id, @symptom, @sympver) set symptom_id=0, vaers_id=@vaers_id, year='+inttostr(year)+
+        ',symptom=substring(@symptom,1,100), symptomversion=@sympver;';
+      execSQL;
+    end;
+end;
+
+begin
+  if sameText(tableName,'data') then
+    Log('Patientdata extraction, year: '+inttostr(Year)+'...');
+
+  uploadPath:='C:/ProgramData/MySQL/MySQL Server 8.0/Uploads';
+  sl:=TStringList.Create;
+  sl.Delimiter:=',';
+  sl.StrictDelimiter:=true;
+
+  case (year=0) of
+    true: begin
+      fn:='NonDomesticVAERSDATA.csv';
+      fn2:='NonDomesticVAERSDATACNV.csv';
+    end;
+    false: begin
+      fn:=inttostr(Year)+'VAERS'+tableName+'.csv';
+      fn2:=inttostr(Year)+'VAERS'+tableName+'CNV.csv';
+    end;
+  end;
+
+  uploadPath:=stringReplace(uploadPath, '\','/',[rfReplaceAll]);
+  fn2:=uploadPath+'/'+fn2;
+
+  assignFile(f2, fn2);
+  {$I-}
+  rewrite(f2);
+  {$I+}
+  IORes:=IOResult;
+  if IORes<>0 then
+  begin
+    Log('Error creating copy file: "'+fn2+'", extraction aborted!');
+    Exit;
+  end;
+
+  lineNo:=0;
+
+  fn:=edPath.Text+'\'+fn;
+  if not fileExists(fn) then
+  begin
+    Log('VAERS Data File: "'+fn+'" did not exist on disk, extraction aborted!');
+    Exit;
+  end;
+
+  {$I-}
+  assignFile(f, fn);
+  reset(f);
+  {$I+}
+  IORes:=IOResult;
+  if IORes<>0 then
+  begin
+    Log('Error opening VAERS Data File: "'+fn+'", extraction aborted!');
+    Exit;
+  end;
+
+  //if not sameText(tableName,'data') then
+  //if cbDelete.Checked then
+  with delQuery do
+  begin
+    Log('Filedata extraction, year: '+inttostr(Year)+', deleting '+tableName+' table...');
+    application.ProcessMessages;
+    sql.Text:='delete from vaers.'+tableName+' where vaers_id>0 and year='+inttostr(Year)+';';
+    ExecSQL;
+  end;
+
+  Log('File: '+fn+', size: '+floattostrf(SizeOfFile(fn)/1048576, ffFixed, 8, 2)+' Mb');
+
+  passNo:=1;
+  //for i:=1 to 100 do
+
+  while not eof(f) do
+  begin
+    readln(f, s);
+    writeln(f2, commaReplace(s));
+    inc(lineNo);
+    if stopEx then exit;
+    if lineNo mod 1000 = 0 then
+    begin
+      edNum.Text:=inttostr(lineNo);
+      application.ProcessMessages;
+    end;
+    //if above 100.000 lines, we can do it in batches...
+    if lineNo mod 100000 = 0 then
+    begin
+      closeFile(f2);
+      if sameText(tableName,'symptoms') then
+        convertSympFile;
+      Log('File conversion of 100.000 lines done, now loading file into DB...');
+      loadDBData;
+      passNo:=0;
+      rewrite(f2);
+    end;
+  end;
+
+  closeFile(f);
+  closeFile(f2);
+  if sameText(tableName,'symptoms') then
+    convertSympFile;
+  Log('File conversion finished, now loading file into DB...');
+  edNum.Text:=inttostr(pred(lineNo));
+  application.ProcessMessages;
+  loadDBData;
+  Log('Success - file data loaded into DB: '+inttostr(pred(lineNo))+' lines.');
+  sl.Free;
+  if fileExists(fn2) then fList.Add(fn2);
+  if fileExists(fn3) then fList.Add(fn3);
+
+  if sameText(tableName,'data') then
+  with checkQuery do
+  begin
+    sql.Text:='select count(*) as num from vaers.data where died=1 and year='+inttostr(year);
+    open;
+    if not (recordCount=0) then
+    begin
+      Log('Data table check - death count='+fieldByName('num').AsString+' for year='+inttostr(year));
+    end;
+    close;
+  end;
+end;
+
+procedure TmainForm.cleanTimerTimer(Sender: TObject);
+begin
+  if fList.Count>0 then
+  begin
+    if fileExists(fList[0]) then
+    begin
+      deleteFile(fList[0]);
+      fList.Delete(0);
+    end;
+  end else cleanTimer.Enabled:=false;
 end;
 
 procedure TmainForm.ExtractData(tableName:string;year:integer);
@@ -2359,6 +3071,7 @@ var fn, fnd:string;
    IORes:integer;
    f2:textfile;
    doSave:boolean;
+   fList:TStringList;
 
 procedure saveData(s:string);
 var startS, line:string;
@@ -2502,16 +3215,17 @@ begin
   with MySQLBatch do
   begin
     sql.Text:=sql.Text+'insert into '+tableName+' values('+
+    //fList.Add('insert into '+tableName+' values('+
     getField(15, true)+','+              //VAERS_ID
-    inttostr(Year)+','+                 //YEAR
+    inttostr(Year)+','+                  //YEAR
     convDate(getField(10, true))+',"'+   //RECVDATE
-    getField(5, false)+'",'+             //STATE
+    getField(2, false)+'",'+             //STATE
     getField(5, true)+','+               //AGE_YRS
     getField(5, true)+','+               //CAGE_YR
-    getField(5, true)+',"'+              //CAGE_MO
-    getField(5, false)+'",'+             //SEX
+    getField(4, true)+',"'+              //CAGE_MO
+    getField(1, false)+'",'+             //SEX
     convDate(getField(10, true))+',"'+   //RPT_DATE
-    getField(65000, false)+'",'+         //SYMPTOM_TEXT
+    getField(32000, false)+'",'+         //SYMPTOM_TEXT
     convBool(getField(4, true))+','+     //DIED
     convDate(getField(10, true))+','+    //DATEDIED
     convBool(getField(1, true))+','+     //L_THREAT
@@ -2524,20 +3238,20 @@ begin
     convDate(getField(10, true))+','+    //VAX_DATE
     convDate(getField(10, true))+','+    //ONSET_DATE
     getField(10, true)+',"'+             //NUMDAYS
-    getField(65000, false)+'","'+        //LAB_DATA
-    getField(10, false)+'","'+           //V_ADMINBY
-    getField(10, false)+'","'+           //V_FUNDBY
-    getField(300, false)+'","'+          //OTHER_MEDS
-    getField(1000, false)+'","'+         //CUR_ILL
-    getField(65000, false)+'","'+        //HISTORY
-    getField(300, false)+'","'+          //PRIOR_VAX
-    getField(300, false)+'","'+          //SPLTTYPE
-    getField(10, false)+'",'+            //FORM_VERS
+    getField(32000, false)+'","'+        //LAB_DATA
+    getField(3, false)+'","'+            //V_ADMINBY
+    getField(3, false)+'","'+            //V_FUNDBY
+    getField(240, false)+'","'+          //OTHER_MEDS
+    getField(32000, false)+'","'+        //CUR_ILL
+    getField(32000, false)+'","'+        //HISTORY
+    getField(128, false)+'","'+          //PRIOR_VAX
+    getField(25, false)+'","'+           //SPLTTYPE
+    getField(1, false)+'",'+             //FORM_VERS
     convDate(getField(10, true))+','+    //TODAYS_DATE
     convBool(getField(1, true))+','+     //BIRTH_DEFECT
     convBool(getField(1, true))+','+     //OFC_VISIT
     convBool(getField(1, true))+',"'+    //ER_ED_VISIT
-    getField(3000, false)+'");';         //ALLERGIES
+    getField(32000, false)+'");';        //ALLERGIES
   end;
 
   s:=startS;
@@ -2586,6 +3300,7 @@ begin
 end;
 
 begin
+  fList:=TStringList.create;
   doSave:=not cbInspection.Checked;
   case (year=0) of
     true: begin
@@ -2666,7 +3381,7 @@ begin
     if i mod 100 = 0 then
     begin
       if secondsBetween(now, sTime)>0 then
-      edNum.text:=inttostr(i)+' '+inttostr(round(i/secondsBetween(now, sTime)))+'/sec.';
+      edNum.text:=inttostr(i)+' '+inttostr(round(i/secondsBetween(now, sTime)))+'/s';
       edNum.Refresh;
 
       if doSave then
@@ -2676,6 +3391,14 @@ begin
         MySQLBatch.SQL.Clear;
       end;
     end;
+
+    {if i mod 100000 = 0 then
+    begin
+      fList.SaveToFile('datainsert.sql');
+      loadQuery('datainsert.sql');
+      fList.Clear;
+    end; }
+
     application.ProcessMessages;
     saveData(s);
   end;
@@ -2693,6 +3416,14 @@ begin
   closefile(f2);
   edNum.text:=inttostr(i);
   edNum.Refresh;
+
+  {if fList.Count>0 then
+  begin
+    fList.SaveToFile('datainsert.sql');
+    loadQuery('datainsert.sql');
+    fList.Clear;
+  end;
+  fList.Free;  }
 
   if stopEx then
   begin
