@@ -8,10 +8,12 @@ uses
   Vcl.DBGrids, mySQLDirectQuery, MySQLBatch, dateUtils, IdIOHandler, Vcl.Grids,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdBaseComponent,
   IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, Vcl.ComCtrls, Vcl.ExtCtrls,
-  Vcl.CheckLst, VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series,
+  Vcl.CheckLst, VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series, RegularExpressions,
   VCLTee.TeeProcs, VCLTee.Chart, shellAPI, Vcl.Buttons, WinSVc, Registry;
 
 type
+ TQueryTYpe = (qtQuery, qtSums, qtC19Lots);
+
  TConnectData = record
      username:string;
      password:string;
@@ -24,14 +26,15 @@ type
     cData: TConnectData;
     FSQL:string;
     FSQLList:TStringList;
+    qType:TQueryType;
     FYear:integer;
     FSumType, FStartYear, FLCount:integer;
     FResult:string;
-    FFinished, FStop, FBatch:boolean;
+    FFinished, FStop:boolean;
     mySQL: TmySQLDatabase;
     workQuery: TmySQLQuery;
   public
-    constructor Create(CreateSuspended:Boolean; SQL:string; batch:boolean; cd:TConnectData);
+    constructor Create(CreateSuspended:Boolean; SQL:string; qt:TQueryType; cd:TConnectData);
     destructor Destroy; override;
     procedure Execute(); override;
     procedure logMain;
@@ -47,7 +50,7 @@ type
     saveDataQuery: TMySQLQuery;
     delQuery: TMySQLQuery;
     MySQLBatch: TMySQLBatchExecute;
-    IdHTTP1: TIdHTTP;
+    IdHTTP: TIdHTTP;
     IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
     pcMain: TPageControl;
     tsExtract: TTabSheet;
@@ -95,13 +98,10 @@ type
     TabSheet2: TTabSheet;
     Panel4: TPanel;
     btnCalc: TButton;
-    edCalcCount: TEdit;
-    Label5: TLabel;
     meCalcLog: TMemo;
     meCheckLog: TMemo;
     pbCalc: TProgressBar;
     QueryCalcTimer: TTimer;
-    Button10: TButton;
     vaxChart: TChart;
     Panel5: TPanel;
     btnUpdate: TButton;
@@ -123,13 +123,9 @@ type
     cbDef: TCheckBox;
     cbRec: TCheckBox;
     cbOff: TCheckBox;
-    cbCalcYears: TCheckListBox;
-    Button12: TButton;
-    Button13: TButton;
-    Label16: TLabel;
     sgFlu: TStringGrid;
     cbC19Vax: TCheckBox;
-    TabSheet3: TTabSheet;
+    tsLot: TTabSheet;
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
     TabSheet6: TTabSheet;
@@ -152,23 +148,12 @@ type
     Panel7: TPanel;
     Panel8: TPanel;
     btnCreateTables: TButton;
-    Label19: TLabel;
-    edUser: TEdit;
-    edPass: TEdit;
-    Label20: TLabel;
-    lblFilepath: TLabel;
-    edPath: TEdit;
-    btnPath: TButton;
     meSetupLog: TMemo;
     btnCheckTextfile: TButton;
     btnConnect: TButton;
     btnLoadFlu: TButton;
     btnLoadStudies: TButton;
     btnDownload: TButton;
-    edPort: TEdit;
-    Label21: TLabel;
-    Label22: TLabel;
-    edDB: TEdit;
     Panel9: TPanel;
     Panel10: TPanel;
     Button1: TButton;
@@ -199,7 +184,6 @@ type
     cbYearsChecked: TCheckListBox;
     Panel16: TPanel;
     sbMain: TStatusBar;
-    cbCheck: TCheckBox;
     lotChart: TChart;
     Panel17: TPanel;
     btnLotUpdate: TButton;
@@ -246,13 +230,9 @@ type
     cbTableType: TComboBox;
     Button17: TButton;
     sqlBatch: TMySQLBatchExecute;
-    Button18: TButton;
-    Label35: TLabel;
     cleanTimer: TTimer;
     btnLoadC19LotList: TButton;
     btnLoadLotList: TButton;
-    Label6: TLabel;
-    edInsCount: TEdit;
     loadTimer: TTimer;
     Panel20: TPanel;
     Label7: TLabel;
@@ -263,6 +243,35 @@ type
     ComboBox1: TComboBox;
     meClean: TMemo;
     SpeedButton2: TSpeedButton;
+    Panel22: TPanel;
+    cbCalcYears: TCheckListBox;
+    Panel21: TPanel;
+    Label16: TLabel;
+    Panel23: TPanel;
+    Button12: TButton;
+    Button13: TButton;
+    Label5: TLabel;
+    edCalcCount: TEdit;
+    btnStopCalc: TSpeedButton;
+    Panel24: TPanel;
+    Label19: TLabel;
+    Label20: TLabel;
+    lblFilepath: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    edUser: TEdit;
+    edPass: TEdit;
+    edPath: TEdit;
+    btnPath: TButton;
+    edPort: TEdit;
+    edDB: TEdit;
+    cbCheck: TCheckBox;
+    Button18: TButton;
+    Label35: TLabel;
+    Label6: TLabel;
+    edInsCount: TEdit;
+    Button7: TButton;
+    Button8: TButton;
     procedure btnDataClick(Sender: TObject);
     procedure btnSymptomsClick(Sender: TObject);
     procedure btnVaxClick(Sender: TObject);
@@ -332,6 +341,9 @@ type
     procedure btnLoadLotListClick(Sender: TObject);
     procedure loadTimerTimer(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure pcMainChange(Sender: TObject);
   private
     { Private declarations }
     dthSeries: TFastLineSeries;
@@ -381,8 +393,12 @@ type
     procedure checkNumRecords(tableName:string; year, count:integer);
     procedure checkData(tableName:string);
     procedure getVaxData;
+    function tableExist(tableName:string):boolean;
+    function schemaExist(schemaName:string):boolean;
     procedure logClean(s:string);
     procedure loadFluData;
+    procedure enableTableKeys(enable:boolean;tablename:string);
+    procedure lockTables(lock:boolean;tablename:string);
   end;
 
 var
@@ -391,6 +407,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses msgUnit;
 
 function ShellEx(FileName: string; Params: string): bool;
 var
@@ -456,14 +474,14 @@ begin
   result:=stringReplace(s, #13+#10,' ',[rfReplaceAll]);
 end;
 
-constructor TQueryThread.Create(CreateSuspended:Boolean; SQL:string; batch:boolean; cd:TConnectData);
+constructor TQueryThread.Create(CreateSuspended:Boolean; SQL:string; qt:TQueryType; cd:TConnectData);
 begin
   inherited Create(CreateSuspended);
   cData:=cd;
   Self.FreeOnTerminate := false;
   FSQLList:=TStringList.Create;
   FSQLList.Text:=SQL;
-  FBatch:=batch;
+  QType:=qt;
   InitObjects;
 end;
 
@@ -503,18 +521,18 @@ begin
     end;
     close;
 
-    if FBatch  then
+    if qType=qtSums  then
     FYear:=strToInt(copy(FSQLList[i], pos('year=',FSQLList[i])+5, 4));
 
-    if FBatch and (SumTypeCount=1) then
+    if (qType=qtSums) and (SumTypeCount=1) then
     begin
-      sql.Text:='delete from vaers.sums where year='+inttostr(FYear)+' and sum_id>0';
+      sql.Text:='delete from sums where year='+inttostr(FYear)+' and sum_id>0';
       ExecSQL;
     end;
 
-    case FBatch of
-      false: Synchronize(LogMain);
-      true: begin
+    case qType of
+      qtQuery, qtC19Lots: Synchronize(LogMain);
+      qtSums: begin
         FSQL:='insert into sums values(0, '+inttostr(SumTypeCount)+', '+inttostr(FYear)+', '+FResult+');';
         sql.Text:=FSQL;
         ExecSQL;
@@ -545,8 +563,8 @@ end;
 
 procedure TQueryThread.LogMain;
 begin
-  case FBatch of
-  false: with mainForm do
+  case qType of
+  qtQuery: with mainForm do
   begin
     lblAction.Caption:='Query finished';
     pbCalc.Position:=pbCalc.Max;
@@ -557,7 +575,16 @@ begin
       meQueryLog.Lines.Insert(0, 'Query: "'+ReplaceCRLF(FSQLList[FLCount])+'" - result: '+FResult);
     end;
   end;
-  true: with mainForm do
+  qtC19Lots: with mainForm do
+  begin
+    if length(FResult)>0 then
+    begin
+      vaxNumC19:=strToIntDef(FResult, 0);
+      logSetup('C19 Lot count result: '+FResult);
+      btnLotUpdateClick(Self);
+    end;
+  end;
+  qtSums: with mainForm do
   begin
     if StopEx then FStop:=true;
     edCalcCount.Text:=inttostr(FYear);
@@ -584,7 +611,7 @@ begin
     keepConnection:=false;
     host:='127.0.0.1';
     port:=strToIntDef(cData.dbport, 3306);
-    databasename:='vaers';
+    databasename:=cData.dbname;
   end;
   workQuery:=TmySQLQuery.Create(nil);
   with workQuery do
@@ -658,12 +685,12 @@ begin
         Add('SELECT count(*)');
         case cbSymptom.checked of
           true: begin
-            Add('FROM vaers.'+ tableName + ' d, vaers.'+vaxTableName+' v, vaers.'+sympTableName+' s');
+            Add('FROM '+ tableName + ' d, '+vaxTableName+' v, '+sympTableName+' s');
             Add('WHERE d.vaers_id=v.vaers_id AND d.vaers_id=s.vaers_id');
             Add('AND v.vax_type=''COVID19'' AND d.died=1');
           end;
           false: begin
-            Add('FROM vaers.'+ tableName + ' d, vaers.'+vaxTableName+' v');
+            Add('FROM '+ tableName + ' d, '+vaxTableName+' v');
             Add('WHERE d.vaers_id=v.vaers_id AND v.vax_type=''COVID19'' AND d.died=1');
           end;
         end;
@@ -695,12 +722,12 @@ begin
         Add('SELECT count(*)');
         case cbSymptom.checked of
           true: begin
-            Add('FROM vaers.'+ tableName + ' d, vaers.'+vaxTableName+' v, vaers.'+sympTableName+' s');
+            Add('FROM '+ tableName + ' d, '+vaxTableName+' v, '+sympTableName+' s');
             Add('WHERE d.vaers_id=v.vaers_id AND d.vaers_id=s.vaers_id');
             Add('AND v.vax_type=''COVID19''');
           end;
           false: begin
-            Add('FROM vaers.'+ tableName + ' d, vaers.'+vaxTableName+' v');
+            Add('FROM '+ tableName + ' d, '+vaxTableName+' v');
             Add('WHERE d.vaers_id=v.vaers_id AND v.vax_type=''COVID19''');
           end;
         end;
@@ -737,7 +764,7 @@ begin
     pbQuery.position:=0;
     queryTimer.Enabled:=true;
     meQuery.Lines.Text:=stringReplace(meQuery.Lines.Text, #13+#10,' ',[rfReplaceAll]);
-    QueryThread:=TQueryThread.Create(true, meQuery.Lines.Text, false, cData);
+    QueryThread:=TQueryThread.Create(true, meQuery.Lines.Text, qtQuery, cData);
     QueryThread.Resume;
     Exit;
   end;
@@ -1208,6 +1235,12 @@ begin
     cbLimit.TExt:='';
     exit;
   end;
+
+  if (vaxLotC19=0) or
+  (vaxNumC19=0) or
+  (vaxLotTotal=0) or
+  (vaxNumTotal=0) then exit;
+
   cbLotType.Enabled:=false;
   lotLoading:=true;
   lotChart.Axes.Left.SetMinMax(0, 5000);
@@ -1226,8 +1259,8 @@ begin
     if active then close;
 
     case cbLotTYpe.ItemIndex of
-      0: sql.Text:='SELECT * FROM vaers.vaxdist where length(vax_lot)>0 and vax_lot<>"unknown" and injections>='+trim(cbLimit.TExt)+' order by injections asc';
-      1: sql.Text:='SELECT * FROM vaers.vaxlot where injections>='+trim(cbLimit.TExt)+' order by injections asc';
+      0: sql.Text:='SELECT * FROM vaxdist where length(vax_lot)>0 and vax_lot<>"unknown" and injections>='+trim(cbLimit.TExt)+' order by injections asc';
+      1: sql.Text:='SELECT * FROM vaxlot where injections>='+trim(cbLimit.TExt)+' order by injections asc';
     end;
 
     open;
@@ -1410,6 +1443,55 @@ begin
   logClean('Finished vax table cleaning for vax_type="covid19"');
 end;
 
+procedure TmainForm.Button7Click(Sender: TObject);
+begin
+  if MessageDlg('Do you want to run OPTIMIZE on the DB tables?',mtWarning, mbYesNO,0)=mrNo then exit;
+  mysql.execute('optimize table data;');
+  mysql.execute('optimize table nddata;');
+  mysql.execute('optimize table vax;');
+  mysql.execute('optimize table ndvax;');
+  mysql.execute('optimize table symptoms;');
+  mysql.execute('optimize table ndsymptoms;');
+  mysql.execute('optimize table vaxdist;');
+  mysql.execute('optimize table vaxlot;');
+  logSetup('DB OPTIMIZE finished.');
+end;
+
+procedure TmainForm.Button8Click(Sender: TObject);
+var sl:TStringList;
+    i:integer;
+begin
+  logSetup('Table check starting...');
+
+  sl:=TStringList.Create;
+  sl.Add('data');
+  sl.Add('nddata');
+  sl.Add('vax');
+  sl.Add('ndvax');
+  sl.Add('symptoms');
+  sl.Add('ndsymptoms');
+  sl.Add('filedata');
+  sl.Add('sums');
+  sl.Add('sumtypes');
+  sl.Add('studies');
+  sl.Add('vaxdist');
+  sl.Add('vaxlot');
+
+  for i:=0 to sl.Count-1 do
+  with checkQuery do
+  begin
+    sql.Text:='check table '+sl[i]+';';
+    open;
+    if not (recordCount=0) then
+    begin
+      logSetup('Check result for table "'+sl[i]+'": '+fieldByName('msg_text').AsString);
+    end;
+    close;
+  end;
+  sl.Free;
+  logSetup('Table check finished');
+end;
+
 procedure TmainForm.btnLoadStudiesClick(Sender: TObject);
 begin
   loadStudies;
@@ -1417,51 +1499,39 @@ end;
 
 procedure TmainForm.btnCreateTablesClick(Sender: TObject);
 var sl:TStringList;
-    s:string;
+    fn, s:string;
     IORes:integer;
 begin
   //create db tables...
-  if not FileExists('table definitions.sql') then
+  fn:='table definitions.sql';
+  if not fileExists(fn) then
   begin
     showMessage('Missing table definitions file, table creation aborted!');
     Exit;
   end;
 
-  with checkQuery do
+  if not schemaExist(cData.dbName) then
   begin
-    sql.Text:='SELECT * FROM information_schema.tables WHERE table_schema = "vaers"  AND table_name = "data" LIMIT 1;';
-    open;
-    if not (recordCount=0) then
-    if MessageDlg('Tables already exist, do you want to proceed? Warning: all table data will be lost, and has to be loaded from text files.',
-      mtWarning, mbYesNo, 0)=mrNo then  Exit;
-    close;
-  end;
-
-  logSetup('Creating Database tables now...');
-  {$I-}
-  assignFile(f, 'table definitions.sql');
-  reset(f);
-  {$I+}
-  IORes:=IOResult;
-  if IORes<>0 then
-  begin
-    Log('Error opening table definitions file: "table definitions.sql", extraction aborted!');
+    showMessage('Database schema "'+cData.dbName+'" missing, table creation aborted!');
     Exit;
   end;
 
-  sl:=TStringList.Create;
-  while not eof(f) do
-  begin
-    readLn(f, s);
-    sl.Add(s);
-  end;
-  closeFile(f);
+  if tableExist('data') then
+    if MessageDlg('Tables already exist, do you want to proceed? Warning: all table data will be lost, and has to be loaded from text files.',
+      mtWarning, mbYesNo, 0)=mrNo then  Exit;
 
-  with checkQuery do
-  begin
-    sql.Text:=sl.Text;
-    ExecSQL;
+  try
+    sl:=TStringList.Create;
+    sl.loadFromFile(fn);
+  except
+   on E:Exception do
+   begin
+     Log('Error opening table definitions file: "'+fn+'", extraction aborted! Error: '+E.Message);
+     Exit;
+   end;
   end;
+
+  MySQL.Execute(sl.Text);
   sl.Free;
 
   LogSetup('Success! Database tables created OK. You may now proceed to VAERS data extraction.');
@@ -1539,6 +1609,11 @@ begin
     close;
     username:=edUser.Text;
     userpassword:=edPass.Text;
+    edDb.Text:=trim(edDB.Text);
+    cData.dbname:=edDb.Text;
+    databasename:=cData.dbname;
+    cData.dbport:=edPort.Text;
+    port:=strToIntDef(cData.dbport, 3306);
     connect;
   end;
 end;
@@ -1697,7 +1772,7 @@ begin
   with checkQUery do
   begin
     sql.text:='insert into vaxdist (vaxdist_id, vax_lot, vax_manu, injections) select 0, vax_lot, vax_manu, count(*) as injections '+
-      'from vaers.vax where vax_type="COVID19" and length(vax_lot)>0 and vax_lot<>"unknown" and vax_lot<>"unk" '+
+      'from vax where vax_type="COVID19" and length(vax_lot)>0 and vax_lot<>"unknown" and vax_lot<>"unk" '+
       'group by vax_lot, vax_manu order by injections desc;';
     ExecSQL;
   end;
@@ -1734,31 +1809,7 @@ begin
 end;
 
 procedure TmainForm.Button17Click(Sender: TObject);
-var i:integer;
-    sl:TStringList;
 begin
-
-  sl:=TStringList.Create;
-
-  with tableQuery do
-  for i:=46715 to 1500000 do
-  begin
-     sl.Add('insert into test values(0, '+inttostr(i)+');');
-     if i mod 100 = 0 then
-     begin
-       sqlBatch.SQL.Text:=sl.Text;
-       sqlBatch.ExecSQL;
-       sqlBatch.SQL.Text:='';
-       sl.Clear;
-       edTableRecs.Text:=inttostr(i);
-       application.ProcessMessages;
-     end;
-  end;
-
-  sl.Free;
-
-  exit;
-
   if tableQuery.Active then tableQUery.Close;
 end;
 
@@ -1800,17 +1851,17 @@ begin
     qList.Add('select count(distinct s.vaers_id) from data d, symptoms s where (d.died=1 or s.symptom="Death") and d.vaers_id=s.vaers_id and d.year='+inttostr(year)+';');
     qList.Add('select count(distinct s.vaers_id) from data d, symptoms s, vax v where (d.died=1 or s.symptom="Death") and d.vaers_id=s.vaers_id and d.year='+
       inttostr(year)+' and d.vaers_id=v.vaers_id and v.vax_type="COVID19";');
-    qList.Add('SELECT count(distinct vaers_id) FROM vaers.data where year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.vax where year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.symptoms where year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where hospital=1 and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where ((er_visit=1) or (er_ed_visit=1)) and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where l_threat=1 and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where disable=1 and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where x_stay=1 and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where ofc_visit=1 and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where recovd=1 and year='+inttostr(year)+';');
-    qList.Add('SELECT count(*) FROM vaers.data where birth_defect=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(distinct vaers_id) FROM data where year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM vax where year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM symptoms where year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where hospital=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where ((er_visit=1) or (er_ed_visit=1)) and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where l_threat=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where disable=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where x_stay=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where ofc_visit=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where recovd=1 and year='+inttostr(year)+';');
+    qList.Add('SELECT count(*) FROM data where birth_defect=1 and year='+inttostr(year)+';');
   end;
 
   lblAction.Caption:='Running query...';
@@ -1818,7 +1869,7 @@ begin
 
   pbCalc.position:=0;
   queryCalcTimer.Enabled:=true;
-  QueryThread:=TQueryThread.Create(true, qList.text, true, cData);
+  QueryThread:=TQueryThread.Create(true, qList.text, qtSums, cData);
   querythread.Resume;
 end;
 
@@ -1828,14 +1879,14 @@ var s, yearStr, num:string;
 begin
   if not FileExists('fluvaxus2.csv') then
   begin
-    showMessage('Missing flu vax history file, data extraction aborted!');
+    logSetup('Missing flu vax history file, data extraction aborted!');
     Exit;
   end;
 
   with checkQuery do
   begin
     if active then close;
-    sql.Text:='delete from vaers.sums where sumtype_id=14 and sum_id>0';
+    sql.Text:='delete from sums where sumtype_id=14 and sum_id>0';
     ExecSQL;
   end;
 
@@ -1846,7 +1897,7 @@ begin
   IORes:=IOResult;
   if IORes<>0 then
   begin
-    showMessage('Flu vax file not found, extraction aborted!');
+    logSetup('Flu vax file not found, extraction aborted!');
     Exit;
   end;
 
@@ -1873,7 +1924,7 @@ begin
   end;
 
   closeFile(f);
-  meCalcLog.Lines.Insert(0, timeToStr(now)+' FLU Data loaded OK!');
+  logSetup('FLU Data loaded OK!');
 end;
 
 procedure TmainForm.btnCheckDataClick(Sender: TObject);
@@ -2270,6 +2321,9 @@ begin
   readLn(f, s);
   if length(s)>0 then
     cData.dbport:=copy(s, pos('=',s)+1, length(s));
+  readLn(f, s);
+  if length(s)>0 then
+    cData.dbName:=copy(s, pos('=',s)+1, length(s));
   closeFile(f);
   {$I-}
   IORes:=IOResult;
@@ -2282,6 +2336,7 @@ begin
   edUser.Text:=cData.username;
   edPass.Text:=cData.password;
   edPort.Text:=cData.dbport;
+  edDb.Text:=cData.dbname;
 end;
 
 procedure TmainForm.saveSetup;
@@ -2298,6 +2353,7 @@ begin
   writeLn(f, 'User='+trim(edUser.Text));
   writeLn(f, 'Pass='+trim(edPass.Text));
   writeLn(f, 'Port='+trim(edPort.Text));
+  writeLn(f, 'DbName='+trim(edDb.Text));
   closeFile(f);
 end;
 
@@ -2310,7 +2366,20 @@ end;
 procedure TmainForm.mysqlAfterConnect(Sender: TObject);
 begin
   logSetup('MySQL Database connected OK');
-  if mySQL.Connected then fastLoad:=localInFile;
+  if mySQL.Connected then
+  begin
+    mySQL.Execute('USE '+cData.dbName+';');
+    fastLoad:=localInFile;
+    if tableExist('data') and tableExist('vaxlot') and tableExist('vaxdist') and tableExist('vax') then
+    begin
+      getVaxData;
+      QueryThread:=TQueryThread.Create(true, 'SELECT count(*) as num FROM vax where vax_type="covid19";', qtC19Lots, cData);
+      querythread.Resume;
+      btnUpdateClick(Self);
+      //btnLotUpdateClick(Self);
+      openStudies;
+    end else logSetup('DB Vaers Tables not found');
+  end;
 
   case fastLoad of
     true: begin
@@ -2324,6 +2393,7 @@ begin
   end;
 
   sbMain.Panels[0].Text:='DB: Connected';
+  sbMain.Panels[2].Text:='Schema: '+cData.dbname;
 end;
 
 function TmainForm.LocalInfile:boolean;
@@ -2395,20 +2465,25 @@ begin
   s.LoadFromFile(iniFile);
   for i:=0 to s.Count-1 do
   if pos('secure-file-priv', s[i])<>0 then
-    result:=copy(s[i], pos('="',s[i])+2, length(s[i])-17);
+  begin
+    result:=copy(s[i], pos('"',s[i])+1, length(s[i]));
+    result:=trim(stringReplace(result,'"','',[rfReplaceAll]));
+  end;
   s.Free;
 end;
 
 procedure getMySQLInfo;
 var res:integer;
-    s:string;
+    s, fn:string;
 begin
+  vaxNumC19:=0;
   serviceName:='';
-  if not fileExists('scList.txt') then
-    res:=ShellExecute(Handle, nil, 'cmd.exe', '/c sc query type=service > scList.txt', '', SW_HIDE);
-  if fileExists('scList.txt') then
+  fn:='scList.txt';
+  if not fileExists(fn) then
+    res:=ShellExecute(Handle, nil, 'cmd.exe', PChar('/c sc query type=service > '+fn), '', SW_HIDE);
+  if fileExists(fn) then
   begin
-    assignFile(f, 'scList.txt');
+    assignFile(f, fn);
     reset(f);
     while (not eof(f)) and (length(serviceName)=0) do
     begin
@@ -2432,7 +2507,7 @@ begin
       end;
     end;
     closeFile(f);
-  end;
+  end else logSetup('Error: could not create service list file, MySQL service name not found!');
   //imagePath="C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.0\my.ini" MySQL80
 end;
 
@@ -2444,18 +2519,21 @@ begin
   pcMain.ActivePage:=tsSetup;
 
   loadSetup;
-  if length(cData.username)>0 then
+  if (length(cData.username)>0) and
+  (length(cData.password)>0) and
+  (length(cData.dbName)>0) then
   with mySQL do
   begin
+    logSetup('Db Schema selected: "'+cData.dbname+'"');
     UserName:=cData.username;
     UserPassword:=cData.password;
-    DatabaseName:='vaers';
+    DatabaseName:=cData.dbname;
     Port:=strToIntDef(cData.dbport, 3306);
     Connect;
   end else
   begin
     pcMain.ActivePage:=tsSetup;
-    LogSetup('No login data, Database not connected.');
+    LogSetup('No/missing login data, Database not connected.');
   end;
 
   cbSymptoms.Items.clear;
@@ -2511,9 +2589,11 @@ begin
       vaxNumTotal:=fieldByName('num').AsInteger;
     close;
   end;
+  logSetup('LOT tables row counts loaded OK');
 
+  exit;
   //number of C19 events
-   with checkQuery do
+  with checkQuery do
   begin
     sql.Text:='SELECT count(*) as num FROM vax where vax_type="covid19";';
     open;
@@ -2521,7 +2601,6 @@ begin
       vaxNumC19:=fieldByName('num').AsInteger;
     close;
   end;
-
 end;
 
 procedure TmainForm.openStudies;
@@ -2544,6 +2623,24 @@ begin
   end;
 end;
 
+procedure TmainForm.pcMainChange(Sender: TObject);
+begin
+  if pcMain.ActivePage=tsLot then
+  if vaxNumC19=0 then
+  with checkQuery do
+  begin
+    msgForm.show;
+    application.ProcessMessages;
+    sql.Text:='SELECT count(*) as num FROM vax where vax_type="covid19";';
+    open;
+    if not (recordCOunt=0) then
+      vaxNumC19:=fieldByName('num').AsInteger;
+    close;
+    msgForm.close;
+    btnLotUpdateClick(Self);
+  end;
+end;
+
 procedure TmainForm.loadStudies;
 var fn, s:string;
     IORes:integer;
@@ -2555,7 +2652,7 @@ begin
     Exit;
   end;
 
-  Log('Loading studies file: "'+fn+'" into database...');
+  LogSetup('Loading studies file: "'+fn+'" into database...');
 
   {$I-}
   assignFile(f, 'studies.txt');
@@ -2564,10 +2661,11 @@ begin
   IORes:=IOResult;
   if IORes<>0 then
   begin
-    Log('Error opening studies file: "'+fn+'", extraction aborted!');
+    LogSetup('Error opening studies file: "'+fn+'", extraction aborted!');
     Exit;
   end;
 
+  lockTables(true, 'studies');
   checkQuery.SQL.Text:='delete from studies where study_id>0;';
   checkQuery.ExecSQL;
   while not eof(f) do
@@ -2577,21 +2675,36 @@ begin
     checkQuery.ExecSQL;
   end;
   closeFile(f);
-  Log('Success! Studies data from file: "'+fn+'" loaded into database!');
+  lockTables(false, 'studies');
+  LogSetup('Success! Studies data from file: "'+fn+'" loaded into database!');
+end;
+
+function TmainForm.schemaExist(schemaName:string):boolean;
+begin
+  with checkQuery do
+    begin
+      sql.Text:='select schema_name from information_schema.schemata where schema_name = "'+schemaName+'";';
+      open;
+      result:=(recordCount<>0);
+      close;
+    end;
+end;
+
+function TmainForm.tableExist(tableName:string):boolean;
+begin
+  with checkQuery do
+    begin
+      sql.Text:='SELECT * FROM information_schema.tables WHERE table_schema = "'+cData.dbName+'"  AND table_name = "'+tableName+'" LIMIT 1;';
+      open;
+      result:=(recordCount<>0);
+      close;
+    end;
 end;
 
 procedure TmainForm.loadTimerTimer(Sender: TObject);
 begin
   loadTImer.Enabled:=false;
-  if MySQL.Connected then
-  begin
-    logSetup('Loading LOT tables row counts...');
-    getVaxData;
-    logSetup('LOT tables row counts loaded OK');
-    btnUpdateClick(Self);
-    btnLotUpdateClick(Self);
-    openStudies;
-  end;
+
 end;
 
 procedure TmainForm.btnReadAllClick(Sender: TObject);
@@ -2813,6 +2926,7 @@ begin
            true: loadData(tableName, i);
            false: extractData(tableName, i);
          end;
+         //extractData(tableName, i);
          if stopEx then
          begin
            Log('Data extraction aborted by user!');
@@ -2838,6 +2952,29 @@ var fn2, fn3, fn,s:string;
     i, lineNo, IORes, passNo:integer;
     f, f2, f3:textfile;
     sl:TStringList;
+    regEx:TRegEx;
+
+function convertDates(s:string):string;
+var i:integer;
+    d, dStr:string;
+begin
+  i:=0;
+  while (i<length(s)) do
+  begin
+    inc(i);
+    d:=copy(s, i, 10);
+    if regEx.IsMatch(d) then
+    begin
+      //we have a date, change format from american mm/dd/yyyy to yyyy-mm-dd format
+      dStr:=copy(d, 7, 4)+'-'+copy(d, 1, 2)+'-'+copy(d, 4, 2);
+      //insert it in the right place
+      s:=copy(s, 1, i-1)+dStr+copy(s, i+10, length(s));
+      //skip past it
+      inc(i, 9);
+    end;
+  end;
+  result:=s;
+end;
 
 function commaReplace(s:string):string;
 var i:integer;
@@ -2858,8 +2995,8 @@ begin
         s[i]:=';';
   end;
   s2:=stringReplace(s,'"','',[rfReplaceAll]);
-  //convert boolean Y to 1 in the right places
-  result:=stringReplace(s2,',Y,',',1,',[rfReplaceAll]);
+  //convert boolean Y to 1 in the right places, and convert dates
+  result:=convertDates(stringReplace(s2,',Y,',',1,',[rfReplaceAll]));
 end;
 
 procedure convertSympFile;
@@ -2867,7 +3004,11 @@ var s, vid, symp, sympver:string;
     i:integer;
 begin
   //convert file to single symptom structure, before adding unique index and year, and loading into DB
-  fn3:=uploadPath+'/'+inttostr(Year)+'VAERS'+tableName+'CNV2.csv';
+  case (year=0) of
+    false: fn3:=uploadPath+'/'+inttostr(Year)+'VAERS'+tableName+'CNV2.csv';
+    true: fn3:=uploadPath+'/NonDomesticVAERS'+copy(tableName, 3, length(tableName))+'CNV2.csv';
+  end;
+
   reset(f2);
   assignFile(f3, fn3);
   rewrite(f3);
@@ -2890,22 +3031,22 @@ end;
 
 procedure loadDBData;
 begin
-  if sameText(tableName,'vax') then
+  if sameText('ndvax',tableName) or sameText('vax',tableName) then
   with checkQUery do
     begin
       sql.Text:='LOAD DATA LOCAL INFILE "'+fn2+'"'+
-        ' INTO TABLE vaers.'+tableName+
+        ' INTO TABLE '+tableName+
         ' CHARACTER SET latin1 FIELDS TERMINATED BY "," IGNORE '+inttostr(passNo)+' LINES '+
         ' (@vaers_id, @vax_type, @vax_manu, @vax_lot, @vax_dose_series, @vax_route, @vax_site, @vax_name) '+
         'set vax_id=0, vaers_id=@vaers_id, year='+inttostr(year)+', vax_type=@vax_type, vax_manu=@vax_manu, vax_lot=@vax_lot, '+
         'vax_dose_series=@vax_dose_series, vax_route=@vax_route, vax_site=substring(@vax_site,1,6), vax_name=substring(@vax_name,1,100);';
       execSQL;
     end;
-  if sameText(tableName,'data') then
+  if sameText('nddata',tableName) or sameText('data',tableName) then
   with checkQUery do
     begin
       sql.Text:='LOAD DATA LOCAL INFILE "'+fn2+'" '+
-        'INTO TABLE vaers.'+tableName+
+        'INTO TABLE '+tableName+
         ' CHARACTER SET latin1 FIELDS TERMINATED BY "," IGNORE '+inttostr(passNo)+' LINES '+
         '(@vaers_id, @recvdate, @state, @age_yrs, @cage_yr, @cage_mo, @sex, @rpt_date, @symptom_text, @died, '+
         '@datedied, @l_threat, @er_visit, @hospital, @hospdays, @x_stay, @disable, @recovd, @vax_date, @onset_date, '+
@@ -2920,11 +3061,11 @@ begin
         'birth_defect=@birth_defect, ofc_visit=@ofc_visit, er_ed_visit=@er_ed_visit, allergies=@allergies;';
       execSQL;
     end;
-  if sameText(tableName,'symptoms') then
+  if sameText('ndsymptoms',tableName) or sameText('symptoms',tableName) then
   with checkQUery do
     begin
       sql.Text:='LOAD DATA LOCAL INFILE "'+fn3+'"'+
-        ' INTO TABLE vaers.'+tableName+' CHARACTER SET latin1 FIELDS TERMINATED BY "," '+
+        ' INTO TABLE '+tableName+' CHARACTER SET latin1 FIELDS TERMINATED BY "," '+
         '(@vaers_id, @symptom, @sympver) set symptom_id=0, vaers_id=@vaers_id, year='+inttostr(year)+
         ',symptom=substring(@symptom,1,100), symptomversion=@sympver;';
       execSQL;
@@ -2932,18 +3073,16 @@ begin
 end;
 
 begin
-  if sameText(tableName,'data') then
-    Log('Patientdata extraction, year: '+inttostr(Year)+'...');
-
-  uploadPath:='C:/ProgramData/MySQL/MySQL Server 8.0/Uploads';
   sl:=TStringList.Create;
   sl.Delimiter:=',';
   sl.StrictDelimiter:=true;
+  //regex for date conversion, 12/22/2021->2021-12-22
+  regEx:=TRegEx.Create('[0-9]{2}\/[0-9]{2}\/[0-9]{4}');
 
   case (year=0) of
     true: begin
-      fn:='NonDomesticVAERSDATA.csv';
-      fn2:='NonDomesticVAERSDATACNV.csv';
+      fn:='NonDomesticVAERS'+copy(tableName, 3, length(tableName))+'.csv';
+      fn2:='NonDomesticVAERS'+copy(tableName, 3, length(tableName))+'CNV.csv';
     end;
     false: begin
       fn:=inttostr(Year)+'VAERS'+tableName+'.csv';
@@ -2989,16 +3128,21 @@ begin
   //if cbDelete.Checked then
   with delQuery do
   begin
-    Log('Filedata extraction, year: '+inttostr(Year)+', deleting '+tableName+' table...');
+    Log('Filedata extraction, year: '+inttostr(Year)+', deleting from '+tableName+' table...');
     application.ProcessMessages;
-    sql.Text:='delete from vaers.'+tableName+' where vaers_id>0 and year='+inttostr(Year)+';';
+    sql.Text:='delete from '+tableName+' where vaers_id>0 and year='+inttostr(Year)+';';
     ExecSQL;
   end;
 
   Log('File: '+fn+', size: '+floattostrf(SizeOfFile(fn)/1048576, ffFixed, 8, 2)+' Mb');
 
+  enableTableKeys(false, tableName);
+
   passNo:=1;
   //for i:=1 to 100 do
+  //sl.LoadFromFile(fn);
+  //Log('File lines: '+inttostr(sl.Count));
+  //exit;
 
   while not eof(f) do
   begin
@@ -3015,7 +3159,7 @@ begin
     if lineNo mod 100000 = 0 then
     begin
       closeFile(f2);
-      if sameText(tableName,'symptoms') then
+      if sameText(tableName,'symptoms') or  sameText(tableName,'ndsymptoms') then
         convertSympFile;
       Log('File conversion of 100.000 lines done, now loading file into DB...');
       loadDBData;
@@ -3026,7 +3170,7 @@ begin
 
   closeFile(f);
   closeFile(f2);
-  if sameText(tableName,'symptoms') then
+  if sameText(tableName,'symptoms') or  sameText(tableName,'ndsymptoms') then
     convertSympFile;
   Log('File conversion finished, now loading file into DB...');
   edNum.Text:=inttostr(pred(lineNo));
@@ -3037,10 +3181,13 @@ begin
   if fileExists(fn2) then fList.Add(fn2);
   if fileExists(fn3) then fList.Add(fn3);
 
+  log('Enabling table indexes...');
+  enableTableKeys(true, tableName);
+
   if sameText(tableName,'data') then
   with checkQuery do
   begin
-    sql.Text:='select count(*) as num from vaers.data where died=1 and year='+inttostr(year);
+    sql.Text:='select count(*) as num from data where died=1 and year='+inttostr(year);
     open;
     if not (recordCount=0) then
     begin
@@ -3050,8 +3197,26 @@ begin
   end;
 end;
 
+procedure TmainForm.enableTableKeys(enable:boolean;tablename:string);
+begin
+  case enable of
+    true: MySQL.Execute('ALTER TABLE '+tableName+' ENABLE KEYS;');
+    false: MySQL.Execute('ALTER TABLE '+tableName+' DISABLE KEYS;');
+  end;
+end;
+
+
+procedure TmainForm.lockTables(lock:boolean;tablename:string);
+begin
+  case lock of
+    true: MySQL.Execute('LOCK TABLES '+tableName+' WRITE;');
+    false: MySQL.Execute('UNLOCK TABLES;');
+  end;
+end;
+
 procedure TmainForm.cleanTimerTimer(Sender: TObject);
 begin
+  exit;
   if fList.Count>0 then
   begin
     if fileExists(fList[0]) then
@@ -3070,7 +3235,6 @@ var fn, fnd:string;
    IORes:integer;
    f2:textfile;
    doSave:boolean;
-   fList:TStringList;
 
 procedure saveData(s:string);
 var startS, line:string;
@@ -3299,7 +3463,6 @@ begin
 end;
 
 begin
-  fList:=TStringList.create;
   doSave:=not cbInspection.Checked;
   case (year=0) of
     true: begin
@@ -3335,7 +3498,7 @@ begin
   if cbDelete.Checked and doSave then
   with delQuery do
   begin
-    Log('Patientdata extraction, year: '+inttostr(Year)+', deleting database...');
+    Log('Patientdata extraction, year: '+inttostr(Year)+', deleting from table...');
     application.ProcessMessages;
     sql.Text:='delete from '+tableName+' where vaers_id>0 and year='+inttostr(Year)+';';
     ExecSQL;
@@ -3391,13 +3554,6 @@ begin
       end;
     end;
 
-    {if i mod 100000 = 0 then
-    begin
-      fList.SaveToFile('datainsert.sql');
-      loadQuery('datainsert.sql');
-      fList.Clear;
-    end; }
-
     application.ProcessMessages;
     saveData(s);
   end;
@@ -3415,14 +3571,6 @@ begin
   closefile(f2);
   edNum.text:=inttostr(i);
   edNum.Refresh;
-
-  {if fList.Count>0 then
-  begin
-    fList.SaveToFile('datainsert.sql');
-    loadQuery('datainsert.sql');
-    fList.Clear;
-  end;
-  fList.Free;  }
 
   if stopEx then
   begin
