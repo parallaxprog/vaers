@@ -1745,7 +1745,7 @@ begin
   startTime:=now;
   server:=StringReplace(serverPath, 'mysqld.exe','mysql.exe',[rfReplaceAll]);
   sl:=TStringList.create;
-  sl.Add('cmd.exe /c "'+server+'" -u '+cData.username+' -p'+cData.password+' vaers < "'+fn+'"');
+  sl.Add('cmd.exe /c "'+server+'" -u '+cData.username+' -p'+cData.password+' '+cData.dbName+' < "'+fn+'"');
   sl.SaveToFile(extractFilePath(fn)+'insert.bat');
   sl.Free;
   //res:=ShellExecute(0, 'open', 'd:\insert.bat',  nil, '', SW_SHOW);
@@ -3211,7 +3211,6 @@ end;
 
 procedure TmainForm.cleanTimerTimer(Sender: TObject);
 begin
-  exit;
   if fList.Count>0 then
   begin
     if fileExists(fList[0]) then
