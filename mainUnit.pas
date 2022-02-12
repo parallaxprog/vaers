@@ -408,8 +408,6 @@ implementation
 
 {$R *.dfm}
 
-uses msgUnit;
-
 function ShellEx(FileName: string; Params: string): bool;
 var
   exInfo: TShellExecuteInfo;
@@ -2629,14 +2627,11 @@ begin
   if vaxNumC19=0 then
   with checkQuery do
   begin
-    msgForm.show;
-    application.ProcessMessages;
     sql.Text:='SELECT count(*) as num FROM vax where vax_type="covid19";';
     open;
     if not (recordCOunt=0) then
       vaxNumC19:=fieldByName('num').AsInteger;
     close;
-    msgForm.close;
     btnLotUpdateClick(Self);
   end;
 end;
