@@ -3,7 +3,7 @@ object mainForm: TmainForm
   Top = 0
   Caption = 'Vaccine Adverse Events Reporting System (VAERS) Data Analyzer'
   ClientHeight = 655
-  ClientWidth = 1370
+  ClientWidth = 1391
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,22 +21,26 @@ object mainForm: TmainForm
   object pcMain: TPageControl
     Left = 0
     Top = 0
-    Width = 1370
+    Width = 1391
     Height = 636
-    ActivePage = TabSheet4
+    ActivePage = tsLot
     Align = alClient
     TabOrder = 0
+    OnChange = pcMainChange
+    ExplicitTop = -6
     object tsExtract: TTabSheet
       Caption = '   Data Extraction   '
+      ExplicitWidth = 1362
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 73
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 1362
         DesignSize = (
-          1362
+          1383
           73)
         object SpeedButton1: TSpeedButton
           Left = 583
@@ -121,7 +125,7 @@ object mainForm: TmainForm
           OnClick = btnStopClick
         end
         object lblCount: TLabel
-          Left = 1123
+          Left = 1144
           Top = 11
           Width = 38
           Height = 16
@@ -194,7 +198,7 @@ object mainForm: TmainForm
           OnClick = btnReadAllClick
         end
         object btnData: TButton
-          Left = 7
+          Left = 2
           Top = 8
           Width = 137
           Height = 49
@@ -209,7 +213,7 @@ object mainForm: TmainForm
           OnClick = btnDataClick
         end
         object edNum: TEdit
-          Left = 1104
+          Left = 1125
           Top = 33
           Width = 93
           Height = 24
@@ -221,9 +225,10 @@ object mainForm: TmainForm
           Font.Style = []
           ParentFont = False
           TabOrder = 4
+          ExplicitLeft = 1104
         end
         object Button3: TButton
-          Left = 1215
+          Left = 1236
           Top = 7
           Width = 137
           Height = 50
@@ -237,6 +242,7 @@ object mainForm: TmainForm
           ParentFont = False
           TabOrder = 5
           OnClick = Button3Click
+          ExplicitLeft = 1215
         end
         object cbDelete: TCheckBox
           Left = 919
@@ -289,10 +295,11 @@ object mainForm: TmainForm
       object Panel2: TPanel
         Left = 0
         Top = 73
-        Width = 1362
+        Width = 1383
         Height = 535
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 1362
         object Panel9: TPanel
           Left = 1
           Top = 10
@@ -316,6 +323,12 @@ object mainForm: TmainForm
               Height = 33
               Align = alLeft
               Caption = 'Check all'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
               TabOrder = 0
               OnClick = Button1Click
             end
@@ -326,6 +339,12 @@ object mainForm: TmainForm
               Height = 33
               Align = alClient
               Caption = 'Clear all'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
               TabOrder = 1
               OnClick = Button2Click
             end
@@ -349,15 +368,16 @@ object mainForm: TmainForm
         object Panel12: TPanel
           Left = 159
           Top = 10
-          Width = 1202
+          Width = 1223
           Height = 524
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 1202
           object meLog: TMemo
             Left = 0
             Top = 0
-            Width = 1202
+            Width = 1223
             Height = 524
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -370,26 +390,29 @@ object mainForm: TmainForm
             TabOrder = 0
             ExplicitLeft = 6
             ExplicitTop = -1
+            ExplicitWidth = 1202
           end
         end
         object pgBar: TProgressBar
           Left = 1
           Top = 1
-          Width = 1360
+          Width = 1381
           Height = 9
           Align = alTop
           TabOrder = 2
           StyleElements = [seFont, seClient]
+          ExplicitWidth = 1360
         end
       end
     end
     object tsStats: TTabSheet
       Caption = '   Statistics     '
       ImageIndex = 1
+      ExplicitWidth = 1362
       object vaxChart: TChart
         Left = 0
         Top = 105
-        Width = 1362
+        Width = 1383
         Height = 503
         BackWall.Color = clWhite
         Legend.Inverted = True
@@ -411,6 +434,7 @@ object mainForm: TmainForm
         ZoomWheel = pmwNormal
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 1362
         DefaultCanvas = 'TGDIPlusCanvas'
         PrintMargins = (
           15
@@ -422,10 +446,11 @@ object mainForm: TmainForm
       object Panel5: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 105
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 1362
         object Label11: TLabel
           Left = 102
           Top = 37
@@ -755,6 +780,7 @@ object mainForm: TmainForm
     object tsQuery: TTabSheet
       Caption = '   Database Query   '
       ImageIndex = 2
+      ExplicitWidth = 1362
       object Label2: TLabel
         Left = 14
         Top = 17
@@ -1077,24 +1103,29 @@ object mainForm: TmainForm
       end
     end
     object tsBackup: TTabSheet
-      Caption = '   Backup   '
+      Caption = '   2021 Numbers     '
       ImageIndex = 3
+      ExplicitLeft = 8
+      ExplicitTop = 22
+      ExplicitWidth = 1362
     end
     object TabSheet1: TTabSheet
       Caption = '   Data Integrity Check   '
       ImageIndex = 4
+      ExplicitWidth = 1362
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 67
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 1362
         DesignSize = (
-          1362
+          1383
           67)
         object Label3: TLabel
-          Left = 1076
+          Left = 1097
           Top = 42
           Width = 38
           Height = 16
@@ -1182,7 +1213,7 @@ object mainForm: TmainForm
           OnClick = btnStopClick
         end
         object Button11: TButton
-          Left = 1223
+          Left = 1244
           Top = 8
           Width = 137
           Height = 50
@@ -1196,9 +1227,10 @@ object mainForm: TmainForm
           ParentFont = False
           TabOrder = 4
           OnClick = Button11Click
+          ExplicitLeft = 1223
         end
         object edCheckNum: TEdit
-          Left = 1136
+          Left = 1157
           Top = 34
           Width = 74
           Height = 24
@@ -1211,6 +1243,7 @@ object mainForm: TmainForm
           Font.Style = []
           ParentFont = False
           TabOrder = 5
+          ExplicitLeft = 1136
         end
         object edCheckResult: TEdit
           Left = 687
@@ -1229,12 +1262,13 @@ object mainForm: TmainForm
       object meCheckLog: TMemo
         Left = 345
         Top = 67
-        Width = 1017
+        Width = 1038
         Height = 541
         Align = alClient
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 1
+        ExplicitWidth = 1017
       end
       object Panel14: TPanel
         Left = 0
@@ -1341,39 +1375,115 @@ object mainForm: TmainForm
     object TabSheet2: TTabSheet
       Caption = '   Run calculations   '
       ImageIndex = 5
-      object Label5: TLabel
-        Left = 630
-        Top = 95
-        Width = 31
-        Height = 16
-        Caption = 'Year:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label16: TLabel
-        Left = 20
-        Top = 93
-        Width = 121
-        Height = 16
-        Caption = 'Select years to check'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
+      ExplicitWidth = 1362
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 73
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 1362
+        DesignSize = (
+          1383
+          73)
+        object Label5: TLabel
+          Left = 1062
+          Top = 28
+          Width = 31
+          Height = 16
+          Anchors = [akTop, akRight]
+          Caption = 'Year:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object btnStopCalc: TSpeedButton
+          Left = 1207
+          Top = 13
+          Width = 154
+          Height = 49
+          Anchors = [akTop, akRight]
+          Caption = 'Stop Calculation'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Glyph.Data = {
+            42080000424D4208000000000000420000002800000020000000200000000100
+            10000300000000080000120B0000120B00000000000000000000007C0000E003
+            00001F000000FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FDD7F5977DE7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FDE7F5977BD7BFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FD572CB653877FF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F3877CB65D472FF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FD472C25CA15C25613877FF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7F38772561A15CC25CB472FF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FD472E35CA05CA05CA15C25613877
+            FF7FFF7FFF7FFF7FFF7FFF7F38772561A15CA05CA05CE35CD472FF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FD472E25CA15CA15CA15CA15CA15C2561
+            3877FF7FFF7FFF7FFF7F38772561A15CA15CA15CA15CA15CE25CD472FF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FD472035DC160C160C160C160C160C160C160
+            25613877FF7FFF7F38772561C160C160C160C160C160C160C160035DD472FF7F
+            FF7FFF7FFF7FFF7FFF7FDD7FD572E25CC160C160C160C160C160C160C160C160
+            C1604561597759774561C160C160C160C160C160C160C160C160C160E25CD572
+            DD7FFF7FFF7FFF7FFF7F3877AA65E164E164E160E160E160E160E160E160E160
+            E160E16025612561E160E160E160E160E160E160E160E160E160E164E164AA65
+            3877FF7FFF7FFF7FFF7FDE7F38774565026D0165E260E260E260E260E260E260
+            E260E160E260E260E160E260E260E260E260E260E260E2600165026D45653877
+            DE7FFF7FFF7FFF7FFF7FFF7FFF7F377745692271026502650265026502650265
+            026502650265026502650265026502650265026502650265227145653877FF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F38774569227122692265226522652265
+            22652265226522652265226522652265226522652269227145693877FF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F3777456943712269226522652265
+            2265226522652265226522652265226522652269437145693877FF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F387745696375436943694369
+            436943694369436943694369436943694369637565693877FF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F38776669636D43694369
+            43694369436943694369436943694369636D66693877FF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F59776661636963696369
+            63696369636963696369636963696369636966615977FF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F387766656369836D836D836D
+            836D836D836D836D836D836D836D836D836D636966653877FF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F38776665846D846D846D846D846D
+            846D846D846D846D846D846D846D846D846D846D846D66653877FF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F38776665A46DA46DA46DA46DA46DA46D
+            A46DA46DA46DA46DA46DA46DA46DA46DA46DA46DA46D846D66653877FF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7F38776665A46DC471A46DA46DA46DA46DA46D
+            A46DA46DA471A471A46DA46DA46DA46DA46DA46DA46DC471A46D66653877FF7F
+            FF7FFF7FFF7FFF7FFF7FDE7F38776665A46DC571C471C471C471C471C471C471
+            C471E575E579E579E575C471C471C471C471C471C471C471C571A46D66653877
+            DE7FFF7FFF7FFF7FFF7F5977CA65C571E575C571E571E571E571E571E571C571
+            E575057A86698669057AE575C571E571E571E571E571E571C571E575C571CA69
+            3877FF7FFF7FFF7FFF7FDD7FD5726469257E0576E571E571E571E571E5710576
+            257E8669397739778669257E0576E571E571E571E571E571E575257E846DB372
+            BC7BFF7FFF7FFF7FFF7FFF7FFF7FD4728569267E057605720572E5710576267E
+            86693877FF7FFF7F38778669267E0576E5710572E5710576267EA56D926EFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FB4728469467E26760576267A467EA769
+            3877FF7FFF7FFF7FFF7F3877A769467E267A05720676467EA56D926EFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FD472A569467E467A467A86693877
+            FF7FFF7FFF7FFF7FFF7FFF7F38778669467A467A467EA56D926EFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FB472A569677AA7693877FF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7F3877A769677AA56D926EFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FD472EC693877FF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F3877EB69B372FF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FDD7F3977DE7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FDE7F3877BD7BFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F
+            FF7FFF7FFF7F}
+          ParentFont = False
+          OnClick = Button10Click
+        end
         object btnCalc: TButton
           Left = 16
           Top = 13
@@ -1389,12 +1499,13 @@ object mainForm: TmainForm
           TabOrder = 0
           OnClick = btnCalcClick
         end
-        object Button10: TButton
-          Left = 617
-          Top = 13
-          Width = 137
-          Height = 49
-          Caption = 'Stop Calculation'
+        object edCalcCount: TEdit
+          Left = 1112
+          Top = 25
+          Width = 74
+          Height = 24
+          Alignment = taRightJustify
+          Anchors = [akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -1402,28 +1513,14 @@ object mainForm: TmainForm
           Font.Style = []
           ParentFont = False
           TabOrder = 1
-          OnClick = Button10Click
         end
       end
-      object edCalcCount: TEdit
-        Left = 680
-        Top = 90
-        Width = 74
-        Height = 24
-        Alignment = taRightJustify
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-      end
       object meCalcLog: TMemo
-        Left = 168
-        Top = 123
-        Width = 586
-        Height = 470
+        Left = 160
+        Top = 82
+        Width = 1223
+        Height = 526
+        Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -1431,56 +1528,122 @@ object mainForm: TmainForm
         Font.Style = []
         ParentFont = False
         ReadOnly = True
-        TabOrder = 2
+        TabOrder = 1
+        ExplicitLeft = 168
+        ExplicitTop = 123
+        ExplicitWidth = 586
+        ExplicitHeight = 470
       end
       object pbCalc: TProgressBar
-        Left = 168
-        Top = 93
-        Width = 433
-        Height = 17
+        Left = 0
+        Top = 73
+        Width = 1383
+        Height = 9
+        Align = alTop
         MarqueeInterval = 1
+        TabOrder = 2
+      end
+      object Panel22: TPanel
+        Left = 0
+        Top = 82
+        Width = 160
+        Height = 526
+        Align = alLeft
         TabOrder = 3
-      end
-      object cbCalcYears: TCheckListBox
-        Left = 16
-        Top = 152
-        Width = 137
-        Height = 441
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ItemHeight = 19
-        ParentFont = False
-        TabOrder = 4
-      end
-      object Button12: TButton
-        Left = 16
-        Top = 123
-        Width = 68
-        Height = 23
-        Caption = 'Check all'
-        TabOrder = 5
-        OnClick = Button12Click
-      end
-      object Button13: TButton
-        Left = 86
-        Top = 123
-        Width = 67
-        Height = 23
-        Caption = 'Clear all'
-        TabOrder = 6
-        OnClick = Button13Click
+        object cbCalcYears: TCheckListBox
+          Left = 1
+          Top = 70
+          Width = 158
+          Height = 455
+          Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ItemHeight = 19
+          ParentFont = False
+          TabOrder = 0
+          ExplicitLeft = 16
+          ExplicitTop = 128
+          ExplicitWidth = 137
+          ExplicitHeight = 312
+        end
+        object Panel21: TPanel
+          Left = 1
+          Top = 1
+          Width = 158
+          Height = 69
+          Align = alTop
+          TabOrder = 1
+          object Label16: TLabel
+            Left = 19
+            Top = 6
+            Width = 121
+            Height = 16
+            Caption = 'Select years to check'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Panel23: TPanel
+            Left = 1
+            Top = 28
+            Width = 156
+            Height = 40
+            Align = alBottom
+            TabOrder = 0
+            ExplicitTop = 31
+            ExplicitWidth = 199
+            object Button12: TButton
+              Left = 1
+              Top = 1
+              Width = 72
+              Height = 38
+              Align = alLeft
+              Caption = 'Check all'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 0
+              OnClick = Button12Click
+            end
+            object Button13: TButton
+              Left = 73
+              Top = 1
+              Width = 82
+              Height = 38
+              Align = alClient
+              Caption = 'Clear all'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -13
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 1
+              OnClick = Button13Click
+              ExplicitLeft = 96
+              ExplicitWidth = 102
+            end
+          end
+        end
       end
     end
-    object TabSheet3: TTabSheet
+    object tsLot: TTabSheet
       Caption = '   LOT Distribution   '
       ImageIndex = 6
+      ExplicitWidth = 1362
       object lotChart: TChart
         Left = 0
         Top = 73
-        Width = 1362
+        Width = 1383
         Height = 535
         BackWall.Color = clWhite
         Legend.Inverted = True
@@ -1502,6 +1665,7 @@ object mainForm: TmainForm
         ZoomWheel = pmwNormal
         Align = alClient
         TabOrder = 0
+        ExplicitTop = 71
         DefaultCanvas = 'TGDIPlusCanvas'
         PrintMargins = (
           15
@@ -1513,10 +1677,11 @@ object mainForm: TmainForm
       object Panel17: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 73
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 1362
         object Label10: TLabel
           Left = 456
           Top = 15
@@ -1769,10 +1934,11 @@ object mainForm: TmainForm
     object TabSheet4: TTabSheet
       Caption = '   Data Tables View   '
       ImageIndex = 7
+      ExplicitWidth = 1362
       object DBGrid2: TDBGrid
         Left = 0
         Top = 69
-        Width = 1362
+        Width = 1383
         Height = 539
         Align = alClient
         DataSource = dstableQuery
@@ -1992,10 +2158,11 @@ object mainForm: TmainForm
       object Panel19: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 69
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 1362
         object Label31: TLabel
           Left = 840
           Top = 11
@@ -2150,16 +2317,18 @@ object mainForm: TmainForm
     object TabSheet5: TTabSheet
       Caption = '  Vax Data Cleaning   '
       ImageIndex = 8
+      ExplicitWidth = 1362
       object Panel20: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 69
         Align = alTop
         TabOrder = 0
         ExplicitTop = 8
+        ExplicitWidth = 1362
         DesignSize = (
-          1362
+          1383
           69)
         object Label7: TLabel
           Left = 328
@@ -2203,7 +2372,7 @@ object mainForm: TmainForm
           ParentFont = False
         end
         object SpeedButton2: TSpeedButton
-          Left = 1191
+          Left = 1212
           Top = 9
           Width = 154
           Height = 49
@@ -2284,6 +2453,7 @@ object mainForm: TmainForm
             FF7FFF7FFF7F}
           ParentFont = False
           OnClick = btnStopClick
+          ExplicitLeft = 1191
         end
         object Button6: TButton
           Left = 13
@@ -2337,7 +2507,7 @@ object mainForm: TmainForm
       object meClean: TMemo
         Left = 0
         Top = 69
-        Width = 1362
+        Width = 1383
         Height = 539
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -2357,13 +2527,15 @@ object mainForm: TmainForm
     object TabSheet6: TTabSheet
       Caption = '   Visual Data Inspection   '
       ImageIndex = 9
+      ExplicitWidth = 1362
       object Panel18: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 69
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 1362
         object Label15: TLabel
           Left = 504
           Top = 15
@@ -2469,7 +2641,7 @@ object mainForm: TmainForm
       object meVisual: TMemo
         Left = 0
         Top = 69
-        Width = 1362
+        Width = 1383
         Height = 539
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -2482,18 +2654,21 @@ object mainForm: TmainForm
         ScrollBars = ssBoth
         TabOrder = 1
         WordWrap = False
+        ExplicitWidth = 1362
       end
     end
     object TabSheet7: TTabSheet
       Caption = '  Studies List   '
       ImageIndex = 10
+      ExplicitWidth = 1362
       object Panel6: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 57
         Align = alTop
         TabOrder = 0
+        ExplicitWidth = 1362
         object Label17: TLabel
           Left = 160
           Top = 18
@@ -2595,7 +2770,7 @@ object mainForm: TmainForm
       object dbgStudies: TDBGrid
         Left = 0
         Top = 57
-        Width = 1362
+        Width = 1383
         Height = 551
         Align = alClient
         DataSource = dsstudyQuery
@@ -2628,167 +2803,26 @@ object mainForm: TmainForm
     object TabSheet8: TTabSheet
       Caption = '  Manufacturers  '
       ImageIndex = 11
+      ExplicitWidth = 1362
     end
     object tsSetup: TTabSheet
       Caption = '   Program Setup   '
       ImageIndex = 12
+      ExplicitWidth = 1362
       object Panel7: TPanel
         Left = 0
         Top = 73
-        Width = 1362
+        Width = 1383
         Height = 535
         Align = alClient
         TabOrder = 0
-        object Label19: TLabel
-          Left = 10
-          Top = 88
-          Width = 119
-          Height = 16
-          Caption = 'Database username:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label20: TLabel
-          Left = 276
-          Top = 88
-          Width = 60
-          Height = 16
-          Caption = 'Password:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object lblFilepath: TLabel
-          Left = 10
-          Top = 49
-          Width = 125
-          Height = 16
-          Caption = 'VAERS datafiles path:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label21: TLabel
-          Left = 716
-          Top = 88
-          Width = 28
-          Height = 16
-          Caption = 'Port:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label22: TLabel
-          Left = 475
-          Top = 88
-          Width = 94
-          Height = 16
-          Caption = 'Database name:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label35: TLabel
-          Left = 10
-          Top = 126
-          Width = 914
-          Height = 16
-          Caption = 
-            'NB: For fast data import, set the global DB variable "local_infi' +
-            'le" to  TRUE in MySQL setup file "my.ini", or click button above' +
-            ' if using login with SUPER privileges.'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label6: TLabel
-          Left = 716
-          Top = 20
-          Width = 38
-          Height = 16
-          Caption = 'Count:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object edUser: TEdit
-          Left = 152
-          Top = 85
-          Width = 105
-          Height = 24
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 0
-          Text = 'vaersuser'
-        end
-        object edPass: TEdit
-          Left = 342
-          Top = 85
-          Width = 107
-          Height = 24
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PasswordChar = '*'
-          TabOrder = 1
-          Text = 'vaers909'
-        end
-        object edPath: TEdit
-          Left = 152
-          Top = 47
-          Width = 673
-          Height = 24
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 2
-        end
-        object btnPath: TButton
-          Left = 864
-          Top = 42
-          Width = 129
-          Height = 31
-          Caption = 'Select folder'
-          TabOrder = 3
-          OnClick = btnPathClick
-        end
+        ExplicitWidth = 1362
         object meSetupLog: TMemo
-          Left = 9
-          Top = 152
-          Width = 984
-          Height = 385
+          Left = 1
+          Top = 154
+          Width = 1381
+          Height = 380
+          Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -2797,88 +2831,266 @@ object mainForm: TmainForm
           ParentFont = False
           ReadOnly = True
           ScrollBars = ssVertical
-          TabOrder = 4
+          TabOrder = 0
+          ExplicitLeft = 9
+          ExplicitTop = 152
+          ExplicitWidth = 984
+          ExplicitHeight = 385
         end
-        object edPort: TEdit
-          Left = 758
-          Top = 85
-          Width = 67
-          Height = 24
-          Alignment = taRightJustify
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          NumbersOnly = True
-          ParentFont = False
-          TabOrder = 5
-          Text = '3306'
-        end
-        object edDB: TEdit
-          Left = 581
-          Top = 85
-          Width = 116
-          Height = 24
-          Hint = 'Database name is hardcoded to "vaers"  '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          ParentShowHint = False
-          ReadOnly = True
-          ShowHint = True
-          TabOrder = 6
-          Text = 'vaers'
-        end
-        object cbCheck: TCheckBox
-          Left = 152
-          Top = 16
-          Width = 401
-          Height = 17
-          Caption = 'Automatically check for online updates of 2022 VAERS data'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 7
-        end
-        object Button18: TButton
-          Left = 864
-          Top = 84
-          Width = 129
-          Height = 30
-          Caption = 'Set DB local_infile=1'
-          TabOrder = 8
-          OnClick = Button18Click
-        end
-        object edInsCount: TEdit
-          Left = 758
-          Top = 17
-          Width = 67
-          Height = 24
-          Alignment = taRightJustify
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          NumbersOnly = True
-          ParentFont = False
-          TabOrder = 9
+        object Panel24: TPanel
+          Left = 1
+          Top = 1
+          Width = 1381
+          Height = 153
+          Align = alTop
+          TabOrder = 1
+          ExplicitLeft = 0
+          ExplicitTop = 160
+          ExplicitWidth = 1369
+          object Label19: TLabel
+            Left = 10
+            Top = 88
+            Width = 119
+            Height = 16
+            Caption = 'Database username:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label20: TLabel
+            Left = 276
+            Top = 88
+            Width = 60
+            Height = 16
+            Caption = 'Password:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblFilepath: TLabel
+            Left = 10
+            Top = 49
+            Width = 125
+            Height = 16
+            Caption = 'VAERS datafiles path:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label21: TLabel
+            Left = 716
+            Top = 88
+            Width = 28
+            Height = 16
+            Caption = 'Port:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label22: TLabel
+            Left = 475
+            Top = 88
+            Width = 94
+            Height = 16
+            Caption = 'Database name:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label35: TLabel
+            Left = 10
+            Top = 126
+            Width = 914
+            Height = 16
+            Caption = 
+              'NB: For fast data import, set the global DB variable "local_infi' +
+              'le" to  TRUE in MySQL setup file "my.ini", or click button above' +
+              ' if using login with SUPER privileges.'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label6: TLabel
+            Left = 716
+            Top = 20
+            Width = 38
+            Height = 16
+            Caption = 'Count:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object edUser: TEdit
+            Left = 152
+            Top = 85
+            Width = 105
+            Height = 24
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            Text = 'vaersuser'
+          end
+          object edPass: TEdit
+            Left = 342
+            Top = 85
+            Width = 107
+            Height = 24
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            PasswordChar = '*'
+            TabOrder = 1
+            Text = 'vaers909'
+          end
+          object edPath: TEdit
+            Left = 152
+            Top = 47
+            Width = 673
+            Height = 24
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 2
+          end
+          object btnPath: TButton
+            Left = 864
+            Top = 42
+            Width = 129
+            Height = 31
+            Caption = 'Select folder'
+            TabOrder = 3
+            OnClick = btnPathClick
+          end
+          object edPort: TEdit
+            Left = 758
+            Top = 85
+            Width = 67
+            Height = 24
+            Alignment = taRightJustify
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            NumbersOnly = True
+            ParentFont = False
+            TabOrder = 4
+            Text = '3306'
+          end
+          object edDB: TEdit
+            Left = 581
+            Top = 85
+            Width = 116
+            Height = 24
+            Hint = 'Database name is hardcoded to "vaers"  '
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
+            Text = 'vaers'
+          end
+          object cbCheck: TCheckBox
+            Left = 152
+            Top = 16
+            Width = 401
+            Height = 17
+            Caption = 'Automatically check for online updates of 2022 VAERS data'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 6
+          end
+          object Button18: TButton
+            Left = 864
+            Top = 84
+            Width = 129
+            Height = 30
+            Caption = 'Set DB local_infile=1'
+            TabOrder = 7
+            OnClick = Button18Click
+          end
+          object edInsCount: TEdit
+            Left = 758
+            Top = 17
+            Width = 67
+            Height = 24
+            Alignment = taRightJustify
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            NumbersOnly = True
+            ParentFont = False
+            TabOrder = 8
+          end
+          object Button7: TButton
+            Left = 1150
+            Top = 68
+            Width = 129
+            Height = 44
+            Caption = 'Optimize DB tables'
+            TabOrder = 9
+            OnClick = Button7Click
+          end
+          object Button8: TButton
+            Left = 1015
+            Top = 70
+            Width = 129
+            Height = 43
+            Caption = 'Check tables'
+            TabOrder = 10
+            OnClick = Button8Click
+          end
         end
       end
       object Panel8: TPanel
         Left = 0
         Top = 0
-        Width = 1362
+        Width = 1383
         Height = 73
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 1362
         object btnCreateTables: TButton
           Left = 318
           Top = 13
@@ -3005,7 +3217,7 @@ object mainForm: TmainForm
   object sbMain: TStatusBar
     Left = 0
     Top = 636
-    Width = 1370
+    Width = 1391
     Height = 19
     Panels = <
       item
@@ -3019,6 +3231,7 @@ object mainForm: TmainForm
       item
         Width = 200
       end>
+    ExplicitWidth = 1370
   end
   object mysql: TMySQLDatabase
     DatabaseName = 'vaers'
@@ -3047,8 +3260,8 @@ object mainForm: TmainForm
     RequestLive = True
     SQL.Strings = (
       'select * from data;')
-    Left = 1144
-    Top = 176
+    Left = 1320
+    Top = 328
   end
   object userSource: TDataSource
     DataSet = userQuery
@@ -3068,10 +3281,11 @@ object mainForm: TmainForm
   object MySQLBatch: TMySQLBatchExecute
     Database = mysql
     Delimiter = ';'
-    Left = 1040
-    Top = 112
+    Left = 1216
+    Top = 312
   end
-  object IdHTTP1: TIdHTTP
+  object IdHTTP: TIdHTTP
+    IOHandler = IdSSLIOHandlerSocketOpenSSL1
     AllowCookies = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
@@ -3085,8 +3299,8 @@ object mainForm: TmainForm
     Request.Ranges.Units = 'bytes'
     Request.Ranges = <>
     HTTPOptions = [hoForceEncodeParams]
-    Left = 1064
-    Top = 168
+    Left = 1160
+    Top = 352
   end
   object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
     MaxLineAction = maException
@@ -3193,7 +3407,7 @@ object mainForm: TmainForm
   object loadTimer: TTimer
     Interval = 2000
     OnTimer = loadTimerTimer
-    Left = 800
-    Top = 200
+    Left = 928
+    Top = 224
   end
 end
