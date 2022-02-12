@@ -1,17 +1,17 @@
-DROP TABLE IF EXISTS `vaers`.`data`;
-DROP TABLE IF EXISTS `vaers`.`vax`;
-DROP TABLE IF EXISTS `vaers`.`symptoms`;
-DROP TABLE IF EXISTS `vaers`.`nddata`;
-DROP TABLE IF EXISTS `vaers`.`ndvax`;
-DROP TABLE IF EXISTS `vaers`.`ndsymptoms`;
-DROP TABLE IF EXISTS `vaers`.`studies`;
-DROP TABLE IF EXISTS `vaers`.`sums`;
-DROP TABLE IF EXISTS `vaers`.`sumtypes`;
-DROP TABLE IF EXISTS `vaers`.`filedata`;
-DROP TABLE IF EXISTS `vaers`.`vaxdist`;
-DROP TABLE IF EXISTS `vaers`.`vaxlot`;
+DROP TABLE IF EXISTS `data`;
+DROP TABLE IF EXISTS `vax`;
+DROP TABLE IF EXISTS `symptoms`;
+DROP TABLE IF EXISTS `nddata`;
+DROP TABLE IF EXISTS `ndvax`;
+DROP TABLE IF EXISTS `ndsymptoms`;
+DROP TABLE IF EXISTS `studies`;
+DROP TABLE IF EXISTS `sums`;
+DROP TABLE IF EXISTS `sumtypes`;
+DROP TABLE IF EXISTS `filedata`;
+DROP TABLE IF EXISTS `vaxdist`;
+DROP TABLE IF EXISTS `vaxlot`;
 
-CREATE TABLE `vaers`.`data` (
+CREATE TABLE `data` (
   `VAERS_ID` int NOT NULL,
   `YEAR` int NOT NULL,
   `RECVDATE` date DEFAULT NULL,
@@ -52,10 +52,9 @@ CREATE TABLE `vaers`.`data` (
   INDEX `YEAR_INDEX` (`YEAR`),
   INDEX `DIED_INDEX` (`DIED`),
   INDEX `NUMDAYS_INDEX` (`NUMDAYS`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci;
 
-
-CREATE TABLE `vaers`.`vax` (
+CREATE TABLE `vax` (
   `VAX_ID` int NOT NULL AUTO_INCREMENT,
   `VAERS_ID` int NOT NULL,
   `YEAR` int DEFAULT NULL,
@@ -68,10 +67,9 @@ CREATE TABLE `vaers`.`vax` (
   `VAX_NAME` char(100) DEFAULT NULL,
   PRIMARY KEY (`VAX_ID`),
   INDEX `YEAR_INDEX` (`YEAR`)
-) ENGINE=InnoDB AUTO_INCREMENT=52753 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
-
-CREATE TABLE `vaers`.`symptoms` (
+CREATE TABLE `symptoms` (
   `SYMPTOM_ID` int NOT NULL AUTO_INCREMENT,
   `VAERS_ID` int NOT NULL,
   `YEAR` int NOT NULL,
@@ -79,9 +77,9 @@ CREATE TABLE `vaers`.`symptoms` (
   `SYMPTOMVERSION` decimal(4,2) DEFAULT NULL,
   PRIMARY KEY (`SYMPTOM_ID`),
   INDEX `YEAR_INDEX` (`YEAR`)
-) ENGINE=InnoDB AUTO_INCREMENT=115185 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
-CREATE TABLE `vaers`.`nddata` (
+CREATE TABLE `nddata` (
   `VAERS_ID` int NOT NULL,
   `YEAR` int NOT NULL,
   `RECVDATE` date DEFAULT NULL,
@@ -122,10 +120,9 @@ CREATE TABLE `vaers`.`nddata` (
   INDEX `YEAR_INDEX` (`YEAR`),
   INDEX `DIED_INDEX` (`DIED`),
   INDEX `NUMDAYS_INDEX` (`NUMDAYS`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci;
 
-
-CREATE TABLE `vaers`.`ndvax` (
+CREATE TABLE `ndvax` (
   `VAX_ID` int NOT NULL AUTO_INCREMENT,
   `VAERS_ID` int NOT NULL,
   `YEAR` int DEFAULT NULL,
@@ -138,10 +135,9 @@ CREATE TABLE `vaers`.`ndvax` (
   `VAX_NAME` char(100) DEFAULT NULL,
   PRIMARY KEY (`VAX_ID`),
   INDEX `YEAR_INDEX` (`YEAR`)
-) ENGINE=InnoDB AUTO_INCREMENT=52753 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
-
-CREATE TABLE `vaers`.`ndsymptoms` (
+CREATE TABLE `ndsymptoms` (
   `SYMPTOM_ID` int NOT NULL AUTO_INCREMENT,
   `VAERS_ID` int NOT NULL,
   `YEAR` int NOT NULL,
@@ -149,15 +145,14 @@ CREATE TABLE `vaers`.`ndsymptoms` (
   `SYMPTOMVERSION` decimal(4,2) DEFAULT NULL,
   PRIMARY KEY (`SYMPTOM_ID`),
   INDEX `YEAR_INDEX` (`YEAR`)
-) ENGINE=InnoDB AUTO_INCREMENT=115185 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
 CREATE TABLE `studies` (
   `study_id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(1000) NOT NULL,
   `url` varchar(1000) NOT NULL,
   PRIMARY KEY (`study_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1012 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci;
 
 CREATE TABLE `sums` (
   `sum_id` int NOT NULL AUTO_INCREMENT,
@@ -165,13 +160,13 @@ CREATE TABLE `sums` (
   `year` int DEFAULT NULL,
   `sum` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`sum_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1520 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
 CREATE TABLE `sumtypes` (
   `sumtype_id` int NOT NULL AUTO_INCREMENT,
-  `sumtype` varchar(200) NOT NULL,
+  `sumtype` char(50) NOT NULL,
   PRIMARY KEY (`sumtype_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
 CREATE TABLE `filedata` (
   `filedata_id` int NOT NULL AUTO_INCREMENT,
@@ -180,27 +175,25 @@ CREATE TABLE `filedata` (
   `size` int DEFAULT NULL,
   `status` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`filedata_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
 CREATE TABLE `vaxdist` (
   `vaxdist_id` int NOT NULL AUTO_INCREMENT,
-  `vax_lot` varchar(100) DEFAULT NULL,
-  `vax_manu` varchar(100) DEFAULT NULL,
+  `vax_lot` char(15) DEFAULT NULL,
+  `vax_manu` char(40) DEFAULT NULL,
   `injections` int DEFAULT NULL,
   PRIMARY KEY (`vaxdist_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=102740 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
 CREATE TABLE `vaxlot` (
   `vaxlot_id` int NOT NULL AUTO_INCREMENT,
-  `vax_type` varchar(100) DEFAULT NULL,
-  `vax_manu` varchar(100) DEFAULT NULL,
-  `vax_lot` varchar(100) DEFAULT NULL,
+  `vax_type` char(15) DEFAULT NULL,
+  `vax_manu` char(40) DEFAULT NULL,
+  `vax_lot` char(15) DEFAULT NULL,
   `year` int DEFAULT NULL,
   `injections` int DEFAULT NULL,
   PRIMARY KEY (`vaxlot_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=547409 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE = MyISAM DEFAULT CHARACTER SET = latin1 COLLATE = latin1_general_ci ROW_FORMAT=Fixed;
 
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (1,'Deaths');
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (2,'COVID19 vax-associated deaths');
@@ -215,8 +208,8 @@ INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (10,'Extended hospitaliza
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (11,'Office/clinic visit');
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (12,'Recovered');
 INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (13,'Birth defect');
-INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (14,'Flu vaccine');
-
+INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (14,'Flu vaccine'); 
+INSERT INTO `sumtypes` (`sumtype_id`,`sumtype`) VALUES (15,'C19 Injection'); 
 
 INSERT INTO `filedata` (`filedata_id`,`filetype`,`year`,`size`,`status`) VALUES (34,1,2022,22771473,1);
 INSERT INTO `filedata` (`filedata_id`,`filetype`,`year`,`size`,`status`) VALUES (35,1,2021,652988813,1);
@@ -317,4 +310,3 @@ INSERT INTO `filedata` (`filedata_id`,`filetype`,`year`,`size`,`status`) VALUES 
 INSERT INTO `filedata` (`filedata_id`,`filetype`,`year`,`size`,`status`) VALUES (130,3,1992,1226607,1);
 INSERT INTO `filedata` (`filedata_id`,`filetype`,`year`,`size`,`status`) VALUES (131,3,1991,1119071,1);
 INSERT INTO `filedata` (`filedata_id`,`filetype`,`year`,`size`,`status`) VALUES (132,3,1990,191116,1);
-
