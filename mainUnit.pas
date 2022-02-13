@@ -62,32 +62,11 @@ type
     btnVax: TButton;
     btnReadAll: TButton;
     Panel2: TPanel;
-    meQuery: TMemo;
-    Label2: TLabel;
-    btnQuery: TButton;
-    lblCountRes: TLabel;
-    edResult: TEdit;
     userQuery: TMySQLQuery;
-    btnSelect: TButton;
-    lblFrom: TLabel;
-    cbTable: TComboBox;
-    lblWhere: TLabel;
-    cbDied: TCheckBox;
-    cbVaxed: TCheckBox;
-    meQueryLog: TMemo;
-    cbAgeBelow: TCheckBox;
-    cbAge: TComboBox;
-    pbQuery: TProgressBar;
-    lblAction: TLabel;
     QueryTimer: TTimer;
-    cbGroup: TCheckBox;
-    cbSymptom: TCheckBox;
-    cbSymptoms: TComboBox;
     tsBackup: TTabSheet;
     OpenDialog: TOpenDialog;
     checkQuery: TMySQLQuery;
-    Label12: TLabel;
-    cbQYears: TComboBox;
     btnData: TButton;
     TabSheet1: TTabSheet;
     Panel3: TPanel;
@@ -272,6 +251,51 @@ type
     edInsCount: TEdit;
     Button7: TButton;
     Button8: TButton;
+    Label36: TLabel;
+    Label37: TLabel;
+    Panel27: TPanel;
+    meQueryLog: TMemo;
+    Panel25: TPanel;
+    Label2: TLabel;
+    lblCountRes: TLabel;
+    lblFrom: TLabel;
+    lblWhere: TLabel;
+    lblAction: TLabel;
+    Label12: TLabel;
+    meQuery: TMemo;
+    btnQuery: TButton;
+    edResult: TEdit;
+    btnSelect: TButton;
+    cbTable: TComboBox;
+    cbDied: TCheckBox;
+    cbVaxed: TCheckBox;
+    cbAgeBelow: TCheckBox;
+    pbQuery: TProgressBar;
+    cbGroup: TCheckBox;
+    cbSymptom: TCheckBox;
+    cbSymptoms: TComboBox;
+    cbQYears: TComboBox;
+    cbAge: TComboBox;
+    Label38: TLabel;
+    Label39: TLabel;
+    Panel26: TPanel;
+    Label41: TLabel;
+    Button9: TButton;
+    edManuCount: TEdit;
+    Button15: TButton;
+    manuGrid: TDBGrid;
+    manuQuery: TMySQLQuery;
+    dsmanuQuery: TDataSource;
+    manuQueryvax_manu: TWideStringField;
+    manuQueryvax_type: TWideStringField;
+    manuQuerynum: TLargeintField;
+    manuQuerytimespan: TWideStringField;
+    manuQueryyears: TLargeintField;
+    Label40: TLabel;
+    edSel: TEdit;
+    edShare: TEdit;
+    Label42: TLabel;
+    manuQueryshare: TWideStringField;
     procedure btnDataClick(Sender: TObject);
     procedure btnSymptomsClick(Sender: TObject);
     procedure btnVaxClick(Sender: TObject);
@@ -344,6 +368,9 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
+    procedure Button15Click(Sender: TObject);
+    procedure manuGridCellClick(Column: TColumn);
   private
     { Private declarations }
     dthSeries: TFastLineSeries;
@@ -365,11 +392,11 @@ type
   public
     { Public declarations }
     startTime:TDateTime;
-    f:textfile;
+    f, fInspect:textfile;
     stopEx:boolean;
     qList, fList:TStringList;
     uploadPath, imagePath, serviceName, iniFile, serverPath, FPath:string;
-    vaxNumC19, vaxNumTotal, vaxLotC19, vaxLotTotal, FStudyCOunt:integer;
+    vaxNum, vaxNumC19, vaxNumTotal, vaxLotC19, vaxLotTotal, FStudyCOunt:integer;
     QueryThread:TQueryThread;
     cData:TConnectData;
     fastLoad, lotLoading:boolean;
@@ -385,6 +412,7 @@ type
     procedure loadStudies;
     procedure LoadLotData;
     procedure loadData(tableName:string;year:integer);
+    procedure saveDataLine(s:string;year:integer;var deaths:integer);
     function yearExist(tableName:string;year:integer):integer;
     procedure ExtractData(tableName:string;year:integer);
     procedure ExtractVax(tableName:string;year:integer);
@@ -407,6 +435,18 @@ var
 implementation
 
 {$R *.dfm}
+
+function IsFileOpen(fileName: TFileName):Boolean;
+var
+  HFileRes: HFILE;
+begin
+  result := False;
+  if not fileExists(FileName) then exit;
+  HFileRes := CreateFile(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  result := (HFileRes = INVALID_HANDLE_VALUE);
+  if not result then
+    closeHandle(HFileRes);
+end;
 
 function ShellEx(FileName: string; Params: string): bool;
 var
@@ -565,7 +605,7 @@ begin
   qtQuery: with mainForm do
   begin
     lblAction.Caption:='Query finished';
-    pbCalc.Position:=pbCalc.Max;
+    pbQuery.Position:=pbQuery.Max;
     QueryTimer.enabled:=false;
     if length(FResult)>0 then
     begin
@@ -685,7 +725,7 @@ begin
           true: begin
             Add('FROM '+ tableName + ' d, '+vaxTableName+' v, '+sympTableName+' s');
             Add('WHERE d.vaers_id=v.vaers_id AND d.vaers_id=s.vaers_id');
-            Add('AND v.vax_type=''COVID19'' AND d.died=1');
+            Add('AND v.vax_type=''COVID19'' AND (d.died=1');
           end;
           false: begin
             Add('FROM '+ tableName + ' d, '+vaxTableName+' v');
@@ -693,11 +733,15 @@ begin
           end;
         end;
         if cbAgeBelow.Checked then
-          Add('AND d.age_yrs<'+getAge);
-        if cbSymptom.Checked then
-          Add('AND s.symptom='''+getSymp(cbSymptoms.Items[cbSymptoms.ItemIndex])+'''');
+          Add('AND d.age_yrs<'+getAge+')') else
+          if cbSymptom.Checked then
+          begin
+            if sameText(getSymp(cbSymptoms.Items[cbSymptoms.ItemIndex]), 'Death') then
+            Add('OR s.symptom='''+getSymp(cbSymptoms.Items[cbSymptoms.ItemIndex])+''')') else
+            Add('AND s.symptom='''+getSymp(cbSymptoms.Items[cbSymptoms.ItemIndex])+''')');
+          end else Add(')');
         if cbGroup.Checked then
-          Add('GROUP BY d.vaers_id');
+          Add(' GROUP BY d.vaers_id');
       end;
     end;
   end else
@@ -1199,18 +1243,29 @@ var fn, s:string;
     IORes, count:integer;
 begin
   case cbVisDom.ItemIndex of
-    0: fn:='VAERS Patientdata - deaths for year '+cbVisYear.Text+'.txt';
+    0: fn:='VAERS Patientdata - US deaths for year '+cbVisYear.Text+'.txt';
     1: fn:='VAERS Patientdata - non-domestic deaths.txt';
   end;
 
   if not fileExists(fn) then
   begin
-    Log('Error opening patientdata inspections file: "'+fn+'", load aborted!');
+    showMessage('Patientdata inspections file: "'+fn+'", not found - load aborted!');
+    Exit;
+  end;
+
+  if sizeOfFile(fn)=0 then
+  begin
+    showMessage('Patientdata inspections file: "'+fn+'", has no data - load aborted!');
     Exit;
   end;
 
   meVisual.Lines.LoadFromFile(fn);
   edVisCount.Text:=floattostrf(meVisual.Lines.count, ffNumber, 7, 0);
+end;
+
+procedure TmainForm.Button15Click(Sender: TObject);
+begin
+  with manuQuery do if active then close;
 end;
 
 procedure TmainForm.btnLotUpdateClick(Sender: TObject);
@@ -1490,6 +1545,12 @@ begin
   logSetup('Table check finished');
 end;
 
+procedure TmainForm.Button9Click(Sender: TObject);
+begin
+  manuQuery.Open;
+  edManuCount.Text:=inttostr(manuQuery.RecordCount);
+end;
+
 procedure TmainForm.btnLoadStudiesClick(Sender: TObject);
 begin
   loadStudies;
@@ -1618,8 +1679,7 @@ end;
 
 procedure TmainForm.btnDownloadClick(Sender: TObject);
 begin
-  //download 2022 data from a server
-  showMessage('Not yet implemented');
+  ShellExecute(Handle, 'open', 'https://vaers.hhs.gov/data/datasets.html', '', '', SW_SHOW);
 end;
 
 procedure TmainForm.btnClearClick(Sender: TObject);
@@ -1710,38 +1770,8 @@ var progpath, param:string;
     server:string;
     sl:TStringList;
 
-function ShellEx(FileName: string; Params: string): bool;
-var
-  exInfo: TShellExecuteInfo;
-  Ph: DWORD;
 begin
-  FillChar(exInfo, SizeOf(exInfo), 0);
-  with exInfo do
-  begin
-    cbSize := SizeOf(exInfo);
-    fMask := SEE_MASK_NOCLOSEPROCESS or SEE_MASK_FLAG_DDEWAIT;
-    Wnd := GetActiveWindow();
-    exInfo.lpVerb := 'open';
-    exInfo.lpParameters := PChar(Params);
-    lpFile := PChar(FileName);
-    nShow := SW_HIDE;
-  end;
-  if ShellExecuteEx(@exInfo) then
-    Ph := exInfo.hProcess
-  else
-  begin
-    ShowMessage(SysErrorMessage(GetLastError));
-    Result := true;
-    exit;
-  end;
-  while WaitForSingleObject(exInfo.hProcess, 50) <> WAIT_OBJECT_0 do sleep(100);
-  CloseHandle(Ph);
-
-  Result := true;
-end;
-
-begin
-  param:=' -u '+cData.username+' -p ' +cData.password+ ' vaers < "' +fn+'"';
+  //param:=' -u '+cData.username+' -p ' +cData.password+ ' '+cData.dbName+' < "' +fn+'"';
   startTime:=now;
   server:=StringReplace(serverPath, 'mysqld.exe','mysql.exe',[rfReplaceAll]);
   sl:=TStringList.create;
@@ -2234,6 +2264,26 @@ begin
   if result then lineNo:=i;
 end;
 
+procedure TmainForm.manuGridCellClick(Column: TColumn);
+var i:integer;
+    tBM:TBookmark;
+begin
+  edSel.Text:=inttostr(manuGrid.SelectedRows.Count);
+  if manuGrid.SelectedRows.Count=1 then
+    vaxNum:=manuQuery.FieldByName('num').AsInteger else
+    begin
+      vaxNum:=0;
+      for i:=0 to manuGrid.SelectedRows.Count-1 do
+      begin
+        tBM:=manuGrid.SelectedRows.Items[i];
+        manuQuery.Bookmark:=tBM;
+        vaxNum:=vaxNum+manuQuery.FieldByName('num').AsINteger;
+      end;
+    end;
+  edShare.Text:=floattostrf(vaxNum, ffNumber, 8, 0)+'/'+floattostrf(vaxNumTotal, ffNumber, 10,0)+
+    ' ('+floattostrf(vaxNum/vaxNumTotal*100, ffFixed, 4, 1)+'%)';
+end;
+
 function TmainForm.DoLineCount:integer;
 var i:integer;
     s:string;
@@ -2358,6 +2408,8 @@ end;
 procedure TmainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   saveSetup;
+  with manuQuery do if active then close;
+  with studyQuery do if active then close;
   mySQL.Close;
 end;
 
@@ -2368,6 +2420,16 @@ begin
   begin
     mySQL.Execute('USE '+cData.dbName+';');
     fastLoad:=localInFile;
+    case fastLoad of
+      true: begin
+        cbDelete.Checked:=true;
+        cbDelete.Enabled:=false;
+      end;
+      false: begin
+        cbDelete.Checked:=false;
+        cbDelete.Enabled:=true;
+      end;
+    end;
     if tableExist('data') and tableExist('vaxlot') and tableExist('vaxdist') and tableExist('vax') then
     begin
       getVaxData;
@@ -2382,7 +2444,7 @@ begin
   case fastLoad of
     true: begin
       LogSetup('DB Fastload activated!');
-      sbMain.Panels[1].Text:='Fastload Activated';
+      sbMain.Panels[1].Text:='DB Fastload Activated';
     end;
     false: begin
       LogSetup('DB Fastload NOT activated! Upgrade DB user privileges or set "local_infile=1" in DB initialization file "my.ini"');
@@ -2391,7 +2453,7 @@ begin
   end;
 
   sbMain.Panels[0].Text:='DB: Connected';
-  sbMain.Panels[2].Text:='Schema: '+cData.dbname;
+  sbMain.Panels[2].Text:='DB Schema: '+cData.dbname;
 end;
 
 function TmainForm.LocalInfile:boolean;
@@ -2475,6 +2537,7 @@ var res:integer;
     s, fn:string;
 begin
   vaxNumC19:=0;
+  vaxNum:=0;
   serviceName:='';
   fn:='scList.txt';
   if not fileExists(fn) then
@@ -2826,10 +2889,12 @@ end;
 procedure TmainForm.QueryCalcTimerTimer(Sender: TObject);
 begin
   pbCalc.Position:=pbCalc.Position+1;
+  if pbCalc.Position>=pbCalc.Max then pbCalc.Position:=1;
 end;
 
 procedure TmainForm.QueryTimerTimer(Sender: TObject);
 begin
+  if pbQuery.Position=pbQuery.Max then pbQuery.Position:=0 else
   pbQuery.Position:=pbQuery.Position+1;
 end;
 
@@ -2943,11 +3008,12 @@ begin
 end;
 
 procedure TmainForm.loadData(tableName:string;year:integer);
-var fn2, fn3, fn,s:string;
-    i, lineNo, IORes, passNo:integer;
+var fnd, fn2, fn3, fn,s:string;
+    i, lineNo, IORes, passNo, deaths:integer;
     f, f2, f3:textfile;
     sl:TStringList;
     regEx:TRegEx;
+    doSave:boolean;
 
 function convertDates(s:string):string;
 var i:integer;
@@ -3067,10 +3133,21 @@ begin
     end;
 end;
 
+procedure closeFiles;
+begin
+  closeFile(f);
+  closeFile(f2);
+  closeFile(fInspect);
+  if fileExists(fn2) then fList.Add(fn2);
+  if fileExists(fn3) then fList.Add(fn3);
+end;
+
 begin
   sl:=TStringList.Create;
   sl.Delimiter:=',';
   sl.StrictDelimiter:=true;
+  doSave:=not cbInspection.Checked;
+  stopEx:=false;
   //regex for date conversion, 12/22/2021->2021-12-22
   regEx:=TRegEx.Create('[0-9]{2}\/[0-9]{2}\/[0-9]{4}');
 
@@ -3078,12 +3155,17 @@ begin
     true: begin
       fn:='NonDomesticVAERS'+copy(tableName, 3, length(tableName))+'.csv';
       fn2:='NonDomesticVAERS'+copy(tableName, 3, length(tableName))+'CNV.csv';
+      fnd:='VAERS Patientdata - non-domestic deaths.txt';
     end;
     false: begin
       fn:=inttostr(Year)+'VAERS'+tableName+'.csv';
       fn2:=inttostr(Year)+'VAERS'+tableName+'CNV.csv';
+      fnd:='VAERS Patientdata - US deaths for year '+inttostr(year)+'.txt';
     end;
   end;
+
+  assignFile(fInspect, fnd);
+  rewrite(fInspect);
 
   uploadPath:=stringReplace(uploadPath, '\','/',[rfReplaceAll]);
   fn2:=uploadPath+'/'+fn2;
@@ -3100,6 +3182,8 @@ begin
   end;
 
   lineNo:=0;
+  deaths:=0;
+  passNo:=1;
 
   fn:=edPath.Text+'\'+fn;
   if not fileExists(fn) then
@@ -3119,39 +3203,38 @@ begin
     Exit;
   end;
 
-  //if not sameText(tableName,'data') then
-  //if cbDelete.Checked then
+  if doSave then
   with delQuery do
   begin
     Log('Filedata extraction, year: '+inttostr(Year)+', deleting from '+tableName+' table...');
     application.ProcessMessages;
     sql.Text:='delete from '+tableName+' where vaers_id>0 and year='+inttostr(Year)+';';
     ExecSQL;
+    enableTableKeys(false, tableName);
   end;
 
   Log('File: '+fn+', size: '+floattostrf(SizeOfFile(fn)/1048576, ffFixed, 8, 2)+' Mb');
 
-  enableTableKeys(false, tableName);
-
-  passNo:=1;
-  //for i:=1 to 100 do
-  //sl.LoadFromFile(fn);
-  //Log('File lines: '+inttostr(sl.Count));
-  //exit;
-
-  while not eof(f) do
+  while (not eof(f)) and (not stopEx) do
   begin
     readln(f, s);
+    saveDataLine(s, year, deaths);
     writeln(f2, commaReplace(s));
     inc(lineNo);
-    if stopEx then exit;
+    if stopEx then
+    begin
+      closeFiles;
+      sl.Free;
+      Log('Extraction aborted by user!');
+      exit;
+    end;
     if lineNo mod 1000 = 0 then
     begin
       edNum.Text:=inttostr(lineNo);
       application.ProcessMessages;
     end;
     //if above 100.000 lines, we can do it in batches...
-    if lineNo mod 100000 = 0 then
+    if (lineNo mod 100000 = 0) and doSave then
     begin
       closeFile(f2);
       if sameText(tableName,'symptoms') or  sameText(tableName,'ndsymptoms') then
@@ -3163,32 +3246,51 @@ begin
     end;
   end;
 
-  closeFile(f);
-  closeFile(f2);
-  if sameText(tableName,'symptoms') or  sameText(tableName,'ndsymptoms') then
-    convertSympFile;
-  Log('File conversion finished, now loading file into DB...');
-  edNum.Text:=inttostr(pred(lineNo));
-  application.ProcessMessages;
-  loadDBData;
-  Log('Success - file data loaded into DB: '+inttostr(pred(lineNo))+' lines.');
+  closeFiles;
+
+  if doSave then
+  begin
+    if sameText(tableName,'symptoms') or  sameText(tableName,'ndsymptoms') then
+      convertSympFile;
+    Log('File conversion finished, now loading file into DB...');
+    edNum.Text:=inttostr(pred(lineNo));
+    application.ProcessMessages;
+    loadDBData;
+    Log('Success - file data loaded into DB: '+inttostr(pred(lineNo))+' lines.');
+    log('Enabling table indexes...');
+    enableTableKeys(true, tableName);
+  end;
+
   sl.Free;
-  if fileExists(fn2) then fList.Add(fn2);
-  if fileExists(fn3) then fList.Add(fn3);
 
-  log('Enabling table indexes...');
-  enableTableKeys(true, tableName);
-
-  if sameText(tableName,'data') then
+  if sameText(tableName,'data') and doSave then
   with checkQuery do
   begin
     sql.Text:='select count(*) as num from data where died=1 and year='+inttostr(year);
     open;
     if not (recordCount=0) then
     begin
-      Log('Data table check - death count='+fieldByName('num').AsString+' for year='+inttostr(year));
+      Log('US Data table check - death count='+fieldByName('num').AsString+' for year='+inttostr(year));
     end;
     close;
+  end;
+
+  if sameText(tableName,'nddata') and doSave then
+  with checkQuery do
+  begin
+    sql.Text:='select count(*) as num from nddata where died=1 and year=0;';
+    open;
+    if not (recordCount=0) then
+    begin
+      Log('Non-domestic Data table check - death count='+fieldByName('num').AsString);
+    end;
+    close;
+  end;
+
+  if sameText(tableName,'data') or  sameText(tableName,'nddata') then
+  case (year=0) of
+    true: log('Patientdata visual inspection file for US, year '+inttostr(year)+', counting '+inttostr(deaths)+' death events, saved as: "'+fnd+'"');
+    false: log('Patientdata visual inspection file, non-domestic, counting '+inttostr(deaths)+' death events, saved as: "'+fnd+'"');
   end;
 end;
 
@@ -3221,64 +3323,10 @@ begin
   end else cleanTimer.Enabled:=false;
 end;
 
-procedure TmainForm.ExtractData(tableName:string;year:integer);
-var fn, fnd:string;
-   s:string;
-   i, endID, lineNo, deaths:integer;
-   sTime:TDateTime;
-   IORes:integer;
-   f2:textfile;
-   doSave:boolean;
 
-procedure saveData(s:string);
-var startS, line:string;
+procedure TMainForm.saveDataLine(s:string;year:integer;var deaths:integer);
+var line:string;
     died:boolean;
-
-function getField(maxD:integer;numField:boolean):string;
-var p:integer;
-begin
-  case numField of
-    true: result:='NULL';
-    false: result:='';
-  end;
-  if copy(s,1,1)='"' then
-  begin
-    //starting quote
-    s:=copy(s, 2, length(s));
-    p:=pos('",',s);
-    if (p<>0) then
-    begin
-      //ending quote, but not last field
-      result:=copy(s, 1, p-1);
-      result:=stringReplace(result,'''','',[rfReplaceAll]);
-      result:=stringReplace(result,'"','',[rfReplaceAll]);
-      result:=strip(stringReplace(result,'""','',[rfReplaceAll]));
-      result:=copy(result,1,maxD);
-      s:=copy(s, p+2, length(s));
-      exit;
-    end else if (pos('"',s)=length(s))  then
-    begin
-      //ending quote for last field, allergies
-      result:=copy(s, 1, length(s));
-      result:=stringReplace(result,'''','',[rfReplaceAll]);
-      result:=stringReplace(result,'"','',[rfReplaceAll]);
-      result:=strip(stringReplace(result,'""','',[rfReplaceAll]));
-      result:=copy(result,1,maxD);
-      exit;
-    end;
-  end;
-
-  p:=pos(',',s);
-  if p<>0 then
-  begin
-    result:=copy(s, 1, p-1);
-    result:=strip(stringReplace(result,'''','',[rfReplaceAll]));
-    result:=copy(result,1,maxD);
-    if numField then
-      if length(result)=0 then result:='NULL';
-    s:=copy(s, p+1, length(s));
-  end;
-end;
 
 function getFieldS(maxD:integer;numField:boolean):string;
 var p, len, i:integer;
@@ -3336,6 +3384,7 @@ end;
 
 function convDate(s:string):string;
 begin
+  s:=trim(s);
   if length(s)=10 then
   result:='"'+copy(s, 7, 4)+'-'+copy(s, 1, 2)+'-'+copy(s, 4, 2)+'"'
   else result:='NULL';
@@ -3360,8 +3409,127 @@ end;
 function cBoolV(s:string;var died:boolean):string;
 begin
   result:='----';
-  died:=sameText(s, 'Y');
+  died:=sameText(trim(s), 'Y');
   if died then result:='DIED';
+end;
+
+begin
+  s:=stringReplace(s,'""','',[rfReplaceAll]);
+  line:=getFieldS(8, true)+','+           //VAERS_ID
+    inttostr(Year)+','+                   //YEAR
+    convDate(getFieldS(10, true))+',"'+    //RECVDATE
+    getFieldS(2, false)+'",'+             //STATE
+    getFieldS(2, false)+','+              //AGE_YRS
+    getFieldS(2, false)+','+              //CAGE_YR
+    getFieldS(1, true)+',"'+              //CAGE_MO
+    getFieldS(1, false)+'",'+             //SEX
+    getFieldS(0, false)+',"'+             //RPT_DATE
+    getFieldS(150, false)+'",'+           //SYMPTOM_TEXT
+    cBoolV(getFieldS(4, true), died)+','+  //DIED
+    getFieldS(10, true)+','+              //DATEDIED
+    convBoolS(getFieldS(1, true))+','+     //L_THREAT
+    convBoolS(getFieldS(1, true))+','+     //ER_VISIT
+    convBoolS(getFieldS(1, true))+','+     //HOSPITAL
+    convBoolS(getFieldS(1, true))+','+     //HOSPDAYS
+    convBoolS(getFieldS(1, true))+','+     //X_STAY
+    convBoolS(getFieldS(1, true))+','+     //DISABLE
+    convBoolS(getFieldS(1, true))+','+     //RECOVD
+    getFieldS(10, true)+','+              //VAX_DATE
+    getFieldS(10, true)+','+              //ONSET_DATE
+    getFieldS(4, true)+',"'+              //NUMDAYS
+    getFieldS(10, false)+'","'+           //LAB_DATA
+    getFieldS(3, false)+'","'+            //V_ADMINBY
+    getFieldS(3, false)+'","'+            //V_FUNDBY
+    getFieldS(10, false)+'","'+           //OTHER_MEDS
+    getFieldS(10, false)+'","'+           //CUR_ILL
+    getFieldS(10, false)+'","'+           //HISTORY
+    getFieldS(10, false)+'","'+           //PRIOR_VAX
+    getFieldS(1, false)+'","'+            //SPLTTYPE
+    getFieldS(1, false)+'",'+              //FORM_VERS
+    getFieldS(10, true)+','+              //TODAYS_DATE
+    convBoolS(getFieldS(1, true))+','+     //BIRTH_DEFECT
+    convBoolS(getFieldS(1, true))+','+     //OFC_VISIT
+    convBoolS(getFieldS(1, true))+',"'+    //ER_ED_VISIT
+    getFieldS(10, false)+'");';           //ALLERGIES
+
+  if died then
+  begin
+    inc(deaths);
+    writeln(fInspect, inttostr(deaths)+'-'+line);
+  end;
+end;
+
+procedure TmainForm.ExtractData(tableName:string;year:integer);
+var fn, fnd:string;
+   s:string;
+   i, endID, lineNo, deaths:integer;
+   sTime:TDateTime;
+   IORes:integer;
+   doSave:boolean;
+
+procedure saveData(s:string);
+var startS, line:string;
+    died:boolean;
+
+function getField(maxD:integer;numField:boolean):string;
+var p:integer;
+begin
+  case numField of
+    true: result:='NULL';
+    false: result:='';
+  end;
+  if copy(s,1,1)='"' then
+  begin
+    //starting quote
+    s:=copy(s, 2, length(s));
+    p:=pos('",',s);
+    if (p<>0) then
+    begin
+      //ending quote, but not last field
+      result:=copy(s, 1, p-1);
+      result:=stringReplace(result,'''','',[rfReplaceAll]);
+      result:=stringReplace(result,'"','',[rfReplaceAll]);
+      result:=strip(stringReplace(result,'""','',[rfReplaceAll]));
+      result:=copy(result,1,maxD);
+      s:=copy(s, p+2, length(s));
+      exit;
+    end else if (pos('"',s)=length(s))  then
+    begin
+      //ending quote for last field, allergies
+      result:=copy(s, 1, length(s));
+      result:=stringReplace(result,'''','',[rfReplaceAll]);
+      result:=stringReplace(result,'"','',[rfReplaceAll]);
+      result:=strip(stringReplace(result,'""','',[rfReplaceAll]));
+      result:=copy(result,1,maxD);
+      exit;
+    end;
+  end;
+
+  p:=pos(',',s);
+  if p<>0 then
+  begin
+    result:=copy(s, 1, p-1);
+    result:=strip(stringReplace(result,'''','',[rfReplaceAll]));
+    result:=copy(result,1,maxD);
+    if numField then
+      if length(result)=0 then result:='NULL';
+    s:=copy(s, p+1, length(s));
+  end;
+end;
+
+function convDate(s:string):string;
+begin
+  if length(s)=10 then
+  result:='"'+copy(s, 7, 4)+'-'+copy(s, 1, 2)+'-'+copy(s, 4, 2)+'"'
+  else result:='NULL';
+end;
+
+function convBool(s:string):string;
+begin
+  result:='NULL';
+  s:=trim(s);
+  if sameText(s, 'Y') then result:='1';
+  if sameText(s, 'N') then result:='0';
 end;
 
 begin
@@ -3410,50 +3578,6 @@ begin
     convBool(getField(1, true))+',"'+    //ER_ED_VISIT
     getField(32000, false)+'");';        //ALLERGIES
   end;
-
-  s:=startS;
-  line:=getField(15, true)+','+           //VAERS_ID
-    inttostr(Year)+','+                   //YEAR
-    convDate(getField(10, true))+',"'+    //RECVDATE
-    getFieldS(2, false)+'",'+             //STATE
-    getFieldS(2, false)+','+              //AGE_YRS
-    getFieldS(2, false)+','+              //CAGE_YR
-    getFieldS(1, true)+',"'+              //CAGE_MO
-    getFieldS(1, false)+'",'+             //SEX
-    getFieldS(0, false)+',"'+             //RPT_DATE
-    getFieldS(150, false)+'",'+           //SYMPTOM_TEXT
-    cBoolV(getField(4, true), died)+','+  //DIED
-    getFieldS(10, true)+','+              //DATEDIED
-    convBoolS(getField(1, true))+','+     //L_THREAT
-    convBoolS(getField(1, true))+','+     //ER_VISIT
-    convBoolS(getField(1, true))+','+     //HOSPITAL
-    convBoolS(getField(1, true))+','+     //HOSPDAYS
-    convBoolS(getField(1, true))+','+     //X_STAY
-    convBoolS(getField(1, true))+','+     //DISABLE
-    convBoolS(getField(1, true))+','+     //RECOVD
-    getFieldS(10, true)+','+              //VAX_DATE
-    getFieldS(10, true)+','+              //ONSET_DATE
-    getFieldS(4, true)+',"'+              //NUMDAYS
-    getFieldS(10, false)+'","'+           //LAB_DATA
-    getFieldS(3, false)+'","'+            //V_ADMINBY
-    getFieldS(3, false)+'","'+            //V_FUNDBY
-    getFieldS(10, false)+'","'+           //OTHER_MEDS
-    getFieldS(10, false)+'","'+           //CUR_ILL
-    getFieldS(10, false)+'","'+           //HISTORY
-    getFieldS(10, false)+'","'+           //PRIOR_VAX
-    getFieldS(1, false)+'","'+            //SPLTTYPE
-    getField(1, false)+'",'+              //FORM_VERS
-    getFieldS(10, true)+','+              //TODAYS_DATE
-    convBoolS(getField(1, true))+','+     //BIRTH_DEFECT
-    convBoolS(getField(1, true))+','+     //OFC_VISIT
-    convBoolS(getField(1, true))+',"'+    //ER_ED_VISIT
-    getFieldS(10, false)+'");';           //ALLERGIES
-
-  if died then
-  begin
-    writeln(f2, line);
-    inc(deaths);
-  end;
 end;
 
 begin
@@ -3469,8 +3593,8 @@ begin
     end;
   end;
 
-  assignFile(f2, fnd);
-  rewrite(f2);
+  assignFile(fInspect, fnd);
+  rewrite(fInspect);
 
   lineNo:=0;
   deaths:=0;
@@ -3550,6 +3674,7 @@ begin
 
     application.ProcessMessages;
     saveData(s);
+    saveDataLine(s, year, deaths);
   end;
 
   //run last batch
@@ -3562,7 +3687,7 @@ begin
   end;
 
   closefile(f);
-  closefile(f2);
+  closefile(fInspect);
   edNum.text:=inttostr(i);
   edNum.Refresh;
 
