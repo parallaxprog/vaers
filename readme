@@ -45,5 +45,6 @@ To add this to the ini.file, add the line LOCAL_INFILE=1 under the heading [mysq
 12.02.2022
 Switched to MyISAM table storage engine for faster data loading, and corrected lacking date conversion in the previous pre-release.
 
-
+13.02.2022
+Added Injection Manufacturer listing, sorted by number of adverse event reports. This shows that covid-injections make up over 40% of all reports spanning 32 years.
 
