@@ -23,7 +23,7 @@ object mainForm: TmainForm
     Top = 0
     Width = 1391
     Height = 636
-    ActivePage = tsLot
+    ActivePage = TabSheet8
     Align = alClient
     TabOrder = 0
     OnChange = pcMainChange
@@ -491,6 +491,32 @@ object mainForm: TmainForm
           Font.Style = []
           ParentFont = False
         end
+        object Label36: TLabel
+          Left = 230
+          Top = 1
+          Width = 64
+          Height = 13
+          Caption = 'C19 Injection'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label37: TLabel
+          Left = 244
+          Top = 13
+          Width = 34
+          Height = 13
+          Caption = 'Deaths'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
         object btnUpdate: TButton
           Left = 9
           Top = 25
@@ -616,9 +642,8 @@ object mainForm: TmainForm
         object cbCovidDeaths: TCheckBox
           Left = 219
           Top = 12
-          Width = 73
+          Width = 14
           Height = 17
-          Caption = 'C19Vax D'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -763,9 +788,9 @@ object mainForm: TmainForm
         object cbC19Vax: TCheckBox
           Left = 1282
           Top = 12
-          Width = 80
+          Width = 93
           Height = 17
-          Caption = 'C19 Vaxed'
+          Caption = 'C19 Injected'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -780,79 +805,14 @@ object mainForm: TmainForm
     object tsQuery: TTabSheet
       Caption = '   Database Query   '
       ImageIndex = 2
-      ExplicitWidth = 1362
-      object Label2: TLabel
-        Left = 14
-        Top = 17
-        Width = 39
-        Height = 16
-        Caption = 'Query:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object lblCountRes: TLabel
-        Left = 193
-        Top = 227
-        Width = 74
-        Height = 16
-        Caption = 'Count result:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object lblFrom: TLabel
-        Left = 189
-        Top = 21
-        Width = 29
-        Height = 13
-        Caption = 'FROM'
-      end
-      object lblWhere: TLabel
-        Left = 365
-        Top = 21
-        Width = 36
-        Height = 13
-        Caption = 'WHERE'
-      end
-      object lblAction: TLabel
-        Left = 505
-        Top = 226
-        Width = 15
-        Height = 16
-        Alignment = taRightJustify
-        Caption = '---'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label12: TLabel
-        Left = 14
-        Top = 55
-        Width = 31
-        Height = 16
-        Caption = 'Year:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
+      ExplicitLeft = 0
+      ExplicitTop = 22
       object DBGrid1: TDBGrid
-        Left = 14
-        Top = 258
-        Width = 766
-        Height = 111
+        Left = 793
+        Top = 0
+        Width = 590
+        Height = 608
+        Align = alClient
         DataSource = userSource
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
@@ -861,245 +821,338 @@ object mainForm: TmainForm
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
       end
-      object meQuery: TMemo
-        Left = 14
-        Top = 82
-        Width = 766
-        Height = 124
+      object Panel27: TPanel
+        Left = 0
+        Top = 0
+        Width = 793
+        Height = 608
+        Align = alLeft
         TabOrder = 1
-      end
-      object btnQuery: TButton
-        Left = 14
-        Top = 216
-        Width = 146
-        Height = 36
-        Caption = 'Run Query'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 2
-        OnClick = btnQueryClick
-      end
-      object edResult: TEdit
-        Left = 271
-        Top = 222
-        Width = 144
-        Height = 24
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 3
-      end
-      object btnSelect: TButton
-        Left = 59
-        Top = 11
-        Width = 118
-        Height = 31
-        Caption = 'SELECT COUNT(*)'
-        TabOrder = 4
-        OnClick = btnSelectClick
-      end
-      object cbTable: TComboBox
-        Left = 230
-        Top = 16
-        Width = 121
-        Height = 24
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ItemIndex = 0
-        ParentFont = False
-        TabOrder = 5
-        Text = 'DATA'
-        Items.Strings = (
-          'DATA'
-          'SYMPTOMS'
-          'VAX'
-          'ND-DATA'
-          'ND-SYMPTOMS'
-          'ND-VAX')
-      end
-      object cbDied: TCheckBox
-        Left = 422
-        Top = 19
-        Width = 57
-        Height = 17
-        Caption = 'DIED'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 6
-      end
-      object cbVaxed: TCheckBox
-        Left = 485
-        Top = 19
-        Width = 114
-        Height = 17
-        Caption = 'VAX:COVID19'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 7
-      end
-      object meQueryLog: TMemo
-        Left = 14
-        Top = 389
-        Width = 766
-        Height = 180
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 8
-      end
-      object cbAgeBelow: TCheckBox
-        Left = 598
-        Top = 18
-        Width = 91
-        Height = 17
-        Caption = 'AGE BELOW'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 9
-      end
-      object cbAge: TComboBox
-        Left = 695
-        Top = 14
-        Width = 82
-        Height = 24
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ItemIndex = 5
-        ParentFont = False
-        TabOrder = 10
-        Text = '30 YRS'
-        Items.Strings = (
-          '5 YRS'
-          '10 YRS'
-          '15 YRS'
-          '20 YRS'
-          '25 YRS'
-          '30 YRS'
-          '35 YRS'
-          '40 YRS'
-          '45 YRS'
-          '50 YRS'
-          '55 YRS'
-          '50 YRS'
-          '55 YRS'
-          '60 YRS'
-          '65 YRS'
-          '70 YRS'
-          '75 YRS'
-          '80 YRS'
-          '85 YRS'
-          '90 YRS'
-          '95 YRS'
-          '100 YRS'
-          ''
-          ''
-          '')
-      end
-      object pbQuery: TProgressBar
-        Left = 536
-        Top = 223
-        Width = 241
-        Height = 17
-        Max = 10
-        MarqueeInterval = 1
-        TabOrder = 11
-      end
-      object cbGroup: TCheckBox
-        Left = 230
-        Top = 52
-        Width = 103
-        Height = 17
-        Caption = 'GROUP BY'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 12
-      end
-      object cbSymptom: TCheckBox
-        Left = 422
-        Top = 51
-        Width = 93
-        Height = 17
-        Caption = 'Symptom ='
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 13
-        OnClick = cbSymptomClick
-      end
-      object cbSymptoms: TComboBox
-        Left = 521
-        Top = 48
-        Width = 256
-        Height = 24
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ItemIndex = 0
-        ParentFont = False
-        TabOrder = 14
-        Text = 'Myocarditis'
-        Items.Strings = (
-          'Myocarditis'
-          'Pericarditis')
-      end
-      object cbQYears: TComboBox
-        Left = 59
-        Top = 51
-        Width = 145
-        Height = 24
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ItemIndex = 0
-        ParentFont = False
-        TabOrder = 15
-        Text = 'All years'
-        Items.Strings = (
-          'All years')
+        object meQueryLog: TMemo
+          Left = 1
+          Top = 313
+          Width = 791
+          Height = 294
+          Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+          ExplicitLeft = 60
+          ExplicitTop = 318
+          ExplicitWidth = 766
+          ExplicitHeight = 267
+        end
+        object Panel25: TPanel
+          Left = 1
+          Top = 1
+          Width = 791
+          Height = 312
+          Align = alTop
+          TabOrder = 1
+          object Label2: TLabel
+            Left = 14
+            Top = 17
+            Width = 39
+            Height = 16
+            Caption = 'Query:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblCountRes: TLabel
+            Left = 193
+            Top = 275
+            Width = 74
+            Height = 16
+            Caption = 'Count result:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object lblFrom: TLabel
+            Left = 189
+            Top = 21
+            Width = 29
+            Height = 13
+            Caption = 'FROM'
+          end
+          object lblWhere: TLabel
+            Left = 365
+            Top = 21
+            Width = 36
+            Height = 13
+            Caption = 'WHERE'
+          end
+          object lblAction: TLabel
+            Left = 505
+            Top = 274
+            Width = 15
+            Height = 16
+            Alignment = taRightJustify
+            Caption = '---'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label12: TLabel
+            Left = 14
+            Top = 55
+            Width = 31
+            Height = 16
+            Caption = 'Year:'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object meQuery: TMemo
+            Left = 0
+            Top = 82
+            Width = 790
+            Height = 167
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+          end
+          object btnQuery: TButton
+            Left = 0
+            Top = 255
+            Width = 160
+            Height = 51
+            Caption = 'Run Query'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+            OnClick = btnQueryClick
+          end
+          object edResult: TEdit
+            Left = 271
+            Top = 270
+            Width = 144
+            Height = 24
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 2
+          end
+          object btnSelect: TButton
+            Left = 59
+            Top = 11
+            Width = 118
+            Height = 31
+            Caption = 'SELECT COUNT(*)'
+            TabOrder = 3
+            OnClick = btnSelectClick
+          end
+          object cbTable: TComboBox
+            Left = 230
+            Top = 16
+            Width = 121
+            Height = 24
+            Style = csDropDownList
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ItemIndex = 0
+            ParentFont = False
+            TabOrder = 4
+            Text = 'DATA'
+            Items.Strings = (
+              'DATA'
+              'SYMPTOMS'
+              'VAX'
+              'ND-DATA'
+              'ND-SYMPTOMS'
+              'ND-VAX')
+          end
+          object cbDied: TCheckBox
+            Left = 422
+            Top = 19
+            Width = 57
+            Height = 17
+            Caption = 'DIED'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 5
+          end
+          object cbVaxed: TCheckBox
+            Left = 485
+            Top = 19
+            Width = 114
+            Height = 17
+            Caption = 'VAX:COVID19'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 6
+          end
+          object cbAgeBelow: TCheckBox
+            Left = 598
+            Top = 18
+            Width = 91
+            Height = 17
+            Caption = 'AGE BELOW'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 7
+          end
+          object pbQuery: TProgressBar
+            Left = 536
+            Top = 271
+            Width = 241
+            Height = 17
+            Max = 10
+            MarqueeInterval = 1
+            TabOrder = 8
+          end
+          object cbGroup: TCheckBox
+            Left = 230
+            Top = 52
+            Width = 103
+            Height = 17
+            Caption = 'GROUP BY'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 9
+          end
+          object cbSymptom: TCheckBox
+            Left = 422
+            Top = 51
+            Width = 93
+            Height = 17
+            Caption = 'Symptom ='
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 10
+            OnClick = cbSymptomClick
+          end
+          object cbSymptoms: TComboBox
+            Left = 521
+            Top = 48
+            Width = 256
+            Height = 24
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ItemIndex = 0
+            ParentFont = False
+            TabOrder = 11
+            Text = 'Myocarditis'
+            Items.Strings = (
+              'Myocarditis'
+              'Pericarditis')
+          end
+          object cbQYears: TComboBox
+            Left = 59
+            Top = 51
+            Width = 145
+            Height = 24
+            Style = csDropDownList
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ItemIndex = 0
+            ParentFont = False
+            TabOrder = 12
+            Text = 'All years'
+            Items.Strings = (
+              'All years')
+          end
+          object cbAge: TComboBox
+            Left = 695
+            Top = 14
+            Width = 82
+            Height = 24
+            Style = csDropDownList
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ItemIndex = 5
+            ParentFont = False
+            TabOrder = 13
+            Text = '30 YRS'
+            Items.Strings = (
+              '5 YRS'
+              '10 YRS'
+              '15 YRS'
+              '20 YRS'
+              '25 YRS'
+              '30 YRS'
+              '35 YRS'
+              '40 YRS'
+              '45 YRS'
+              '50 YRS'
+              '55 YRS'
+              '50 YRS'
+              '55 YRS'
+              '60 YRS'
+              '65 YRS'
+              '70 YRS'
+              '75 YRS'
+              '80 YRS'
+              '85 YRS'
+              '90 YRS'
+              '95 YRS'
+              '100 YRS'
+              ''
+              ''
+              '')
+          end
+        end
       end
     end
     object tsBackup: TTabSheet
@@ -2575,6 +2628,36 @@ object mainForm: TmainForm
           Font.Style = []
           ParentFont = False
         end
+        object Label38: TLabel
+          Left = 640
+          Top = 23
+          Width = 667
+          Height = 16
+          Caption = 
+            'NB: These record death events may not be the total number, as th' +
+            'ere may be some patients with "Symptom=Death"'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label39: TLabel
+          Left = 669
+          Top = 45
+          Width = 590
+          Height = 16
+          Caption = 
+            'recorded in the symptom table, which are not set as "Died=True" ' +
+            'in the patient data table. It usually is.'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
         object Button14: TButton
           Left = 13
           Top = 9
@@ -2803,7 +2886,199 @@ object mainForm: TmainForm
     object TabSheet8: TTabSheet
       Caption = '  Manufacturers  '
       ImageIndex = 11
-      ExplicitWidth = 1362
+      ExplicitLeft = 8
+      ExplicitTop = 22
+      object Panel26: TPanel
+        Left = 0
+        Top = 0
+        Width = 1383
+        Height = 57
+        Align = alTop
+        TabOrder = 0
+        ExplicitTop = 8
+        object Label41: TLabel
+          Left = 336
+          Top = 26
+          Width = 38
+          Height = 16
+          Caption = 'Count:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label40: TLabel
+          Left = 504
+          Top = 26
+          Width = 54
+          Height = 16
+          Caption = 'Selected:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label42: TLabel
+          Left = 648
+          Top = 26
+          Width = 83
+          Height = 16
+          Caption = 'Share of total:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Button9: TButton
+          Left = 9
+          Top = 0
+          Width = 137
+          Height = 49
+          Caption = 'Open Query'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnClick = Button9Click
+        end
+        object edManuCount: TEdit
+          Left = 382
+          Top = 23
+          Width = 99
+          Height = 24
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 1
+        end
+        object Button15: TButton
+          Left = 152
+          Top = 0
+          Width = 137
+          Height = 49
+          Caption = 'Close Query'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 2
+          OnClick = Button15Click
+        end
+        object edSel: TEdit
+          Left = 566
+          Top = 23
+          Width = 67
+          Height = 24
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 3
+        end
+        object edShare: TEdit
+          Left = 742
+          Top = 23
+          Width = 219
+          Height = 24
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 4
+        end
+      end
+      object manuGrid: TDBGrid
+        Left = 0
+        Top = 57
+        Width = 1383
+        Height = 551
+        Align = alClient
+        DataSource = dsmanuQuery
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -13
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        OnCellClick = manuGridCellClick
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'vax_manu'
+            Title.Caption = 'Injection manufacturer'
+            Width = 400
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'vax_type'
+            Title.Caption = 'Injection type'
+            Width = 200
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'num'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'VAERS Reports'
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'timespan'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Timespan'
+            Width = 150
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'years'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Years in use'
+            Width = 100
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'share'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Share'
+            Width = 100
+            Visible = True
+          end>
+      end
     end
     object tsSetup: TTabSheet
       Caption = '   Program Setup   '
@@ -3171,7 +3446,7 @@ object mainForm: TmainForm
           Top = 13
           Width = 162
           Height = 49
-          Caption = 'Download Data'
+          Caption = 'Get VAERS Files'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -3373,8 +3648,8 @@ object mainForm: TmainForm
   end
   object lotDQuery: TMySQLDirectQuery
     Database = mysql
-    Left = 520
-    Top = 304
+    Left = 512
+    Top = 352
   end
   object tableQuery: TMySQLQuery
     Database = mysql
@@ -3395,8 +3670,8 @@ object mainForm: TmainForm
   object sqlBatch: TMySQLBatchExecute
     Database = mysql
     Delimiter = ';'
-    Left = 216
-    Top = 280
+    Left = 184
+    Top = 352
   end
   object cleanTimer: TTimer
     Enabled = False
@@ -3409,5 +3684,53 @@ object mainForm: TmainForm
     OnTimer = loadTimerTimer
     Left = 928
     Top = 224
+  end
+  object manuQuery: TMySQLQuery
+    Database = mysql
+    Options.FetchRows = 100
+    Options.RefreshDelete = False
+    SQL.Strings = (
+      'SELECT distinct(vax_manu), vax_type, count(*) as num, '
+      
+        'concat_ws('#39' - '#39',min(year), max(year)) as timespan, max(year)-min' +
+        '(year) as years, '
+      
+        'concat(format(count(*)/(select count(*) from vax)*100,1),'#39' %'#39') a' +
+        's share'
+      'from vax '
+      'group by vax_manu, vax_type'
+      'order by count(*) desc')
+    Left = 288
+    Top = 216
+    object manuQueryvax_manu: TWideStringField
+      FieldName = 'vax_manu'
+      Size = 40
+    end
+    object manuQueryvax_type: TWideStringField
+      FieldName = 'vax_type'
+      Size = 15
+    end
+    object manuQuerynum: TLargeintField
+      FieldName = 'num'
+      Required = True
+      DisplayFormat = '###,###'
+    end
+    object manuQuerytimespan: TWideStringField
+      Alignment = taRightJustify
+      FieldName = 'timespan'
+      Size = 25
+    end
+    object manuQueryyears: TLargeintField
+      FieldName = 'years'
+    end
+    object manuQueryshare: TWideStringField
+      FieldName = 'share'
+      Size = 72
+    end
+  end
+  object dsmanuQuery: TDataSource
+    DataSet = manuQuery
+    Left = 352
+    Top = 208
   end
 end
