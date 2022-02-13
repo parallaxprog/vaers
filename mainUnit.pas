@@ -2912,7 +2912,7 @@ begin
        begin
          case fastLoad of
            true: loadData(tableName, i);
-           false: extractData(tableName, i);
+           false: extractSymp(tableName, i);
          end;
          if stopEx then
          begin
@@ -2948,7 +2948,7 @@ begin
        begin
          case fastLoad of
            true: loadData(tableName, i);
-           false: extractData(tableName, i);
+           false: extractVax(tableName, i);
          end;
          if stopEx then
          begin
