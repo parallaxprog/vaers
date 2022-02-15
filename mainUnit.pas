@@ -286,7 +286,6 @@ type
     btnLoadFile: TSpeedButton;
     btnCleanTables: TSpeedButton;
     SpeedButton1: TSpeedButton;
-    nxDatabase1: TnxDatabase;
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
     SpeedButton4: TSpeedButton;
