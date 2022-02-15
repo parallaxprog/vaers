@@ -6783,8 +6783,4 @@ object mainForm: TmainForm
     Left = 352
     Top = 208
   end
-  object nxDatabase1: TnxDatabase
-    Left = 532
-    Top = 507
-  end
 end
